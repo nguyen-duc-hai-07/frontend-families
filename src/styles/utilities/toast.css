@@ -21,10 +21,10 @@
     gap: 12px;
     padding: 12px 38px 12px 14px;
     border-radius: 12px;
-    background: #ffffff;
-    box-shadow: 0 16px 32px -8px rgba(17, 24, 39, 0.18),
-                0 4px 12px rgba(17, 24, 39, 0.08);
-    color: #1e293b;
+    background: var(--c-surface);
+    box-shadow: var(--shadow-card);
+    border: 1px solid var(--c-divider);
+    color: var(--c-text);
     font-size: 0.9rem;
     line-height: 1.5;
     min-width: 280px;
@@ -34,12 +34,6 @@
     position: relative;
     overflow: hidden;
     animation: toast-in 0.24s cubic-bezier(0.16, 1, 0.3, 1);
-}
-html.dark .toast {
-    background: #1e293b;
-    color: #e2e8f0;
-    box-shadow: 0 16px 32px -8px rgba(0, 0, 0, 0.5),
-                0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
 /* Thanh accent trái — màu theo type. */
@@ -51,9 +45,9 @@ html.dark .toast {
     bottom: 0;
     width: 4px;
 }
-.toast--info::before    { background: #b45309; }
-.toast--success::before { background: #16a34a; }
-.toast--error::before   { background: #dc2626; }
+.toast--info::before    { background: var(--c-gold); }
+.toast--success::before { background: var(--c-success); }
+.toast--error::before   { background: var(--c-danger); }
 
 .toast-ico {
     flex: none;
@@ -68,9 +62,9 @@ html.dark .toast {
     line-height: 1;
     color: #fff;
 }
-.toast--info .toast-ico    { background: #b45309; }
-.toast--success .toast-ico { background: #16a34a; }
-.toast--error .toast-ico   { background: #dc2626; }
+.toast--info .toast-ico    { background: var(--c-gold); }
+.toast--success .toast-ico { background: var(--c-success); }
+.toast--error .toast-ico   { background: var(--c-danger); }
 
 .toast-body {
     flex: 1;
@@ -84,13 +78,13 @@ html.dark .toast {
     font-weight: 700;
     font-size: 0.92rem;
     line-height: 1.35;
+    color: var(--c-heading);
 }
 .toast-desc {
     font-size: 0.86rem;
     line-height: 1.45;
-    color: #475569;
+    color: var(--c-muted);
 }
-html.dark .toast-desc { color: #94a3b8; }
 
 .toast-close {
     position: absolute;
@@ -101,7 +95,7 @@ html.dark .toast-desc { color: #94a3b8; }
     border-radius: 50%;
     border: none;
     background: transparent;
-    color: #94a3b8;
+    color: var(--c-muted-2);
     cursor: pointer;
     font-size: 18px;
     line-height: 1;
@@ -109,7 +103,7 @@ html.dark .toast-desc { color: #94a3b8; }
     align-items: center;
     justify-content: center;
 }
-.toast-close:hover { background: rgba(148, 163, 184, 0.15); color: inherit; }
+.toast-close:hover { background: var(--c-surface-3); color: var(--c-text); }
 
 @keyframes toast-in {
     from { opacity: 0; transform: translateX(24px); }

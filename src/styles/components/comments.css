@@ -12,16 +12,14 @@
     margin-left: 44px;
     background: transparent;
     border: none;
-    color: #b45309;
+    color: var(--c-gold);
     cursor: pointer;
     font-size: 0.85rem;
     font-weight: 600;
     padding: 4px 8px;
     border-radius: 6px;
 }
-.poem-comment-expand:hover { background: rgba(180, 83, 9, 0.08); }
-html.dark .poem-comment-expand { color: #fbbf24; }
-html.dark .poem-comment-expand:hover { background: rgba(251, 191, 36, 0.1); }
+.poem-comment-expand:hover { background: var(--c-brand-tint); }
 
 .poem-comment-replies {
     list-style: none;
@@ -46,7 +44,7 @@ html.dark .poem-comment-expand:hover { background: rgba(251, 191, 36, 0.1); }
     top: 0;
     bottom: 0;
     width: 2px;
-    background: #e2e8f0;
+    background: var(--c-divider);
 }
 .poem-comment-replies > li:last-child::before { bottom: auto; height: 29px; }
 .poem-comment-replies > li::after {
@@ -56,14 +54,9 @@ html.dark .poem-comment-expand:hover { background: rgba(251, 191, 36, 0.1); }
     top: 15px;
     width: calc(var(--reply-indent) - 16px);
     height: 14px;
-    border-left: 2px solid #e2e8f0;
-    border-bottom: 2px solid #e2e8f0;
+    border-left: 2px solid var(--c-divider);
+    border-bottom: 2px solid var(--c-divider);
     border-bottom-left-radius: 9px;
-}
-html.dark .poem-comment-replies > li::before { background: #334155; }
-html.dark .poem-comment-replies > li::after {
-    border-left-color: #334155;
-    border-bottom-color: #334155;
 }
 
 /* Trục nối từ avatar comment gốc xuống thread trả lời (qua vùng nút Xem/Ẩn). */
@@ -74,10 +67,7 @@ html.dark .poem-comment-replies > li::after {
     top: 40px;
     bottom: -40px;
     width: 2px;
-    background: #e2e8f0;
-}
-html.dark .poem-comment-thread:has(.poem-comment-replies) > .poem-comment > .poem-comment-avatar::after {
-    background: #334155;
+    background: var(--c-divider);
 }
 
 .poem-comment {

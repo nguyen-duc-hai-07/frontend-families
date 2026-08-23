@@ -41,7 +41,9 @@
 
 /* DARK — navy/blue: nền L0 navy-đen, lớp chồng sáng dần, chữ xanh nhạt
    (không #fff tinh), accent xanh + gold. */
-:root[data-theme='dark'] {
+:root[data-theme='dark'],
+:root.dark,
+.dark {
   color-scheme: dark;
   /* DARK hiện đại: navy sâu, chữ trắng-xanh nhạt, nhấn xanh sáng (theo mẫu PDF). */
   --c-ink-strong: #eef3fb;

@@ -48,10 +48,10 @@
   color: var(--c-brand);
 }
 .page-btn--active {
-  background: linear-gradient(135deg, #b54545, #d97373);
+  background: linear-gradient(135deg, var(--c-brand), var(--c-brand-2));
   border-color: transparent;
   color: #fff;
-  box-shadow: 0 2px 8px rgba(181, 69, 69, 0.3);
+  box-shadow: 0 2px 8px var(--c-brand-tint-border);
   cursor: default;
 }
 .page-btn:disabled {
@@ -84,12 +84,7 @@
     background-position: 0 50%;
   }
 }
-/* Dark mode: biến --c-surface-* không đổi theo .dark nên chỉ định màu tối riêng
-   để skeleton không bị trắng lóa trên nền tối. */
-html.dark .skeleton {
-  background: linear-gradient(90deg, #1e293b 25%, #334155 37%, #1e293b 63%);
-  background-size: 400% 100%;
-}
+
 @media (prefers-reduced-motion: reduce) {
   .skeleton {
     animation: none;
@@ -178,25 +173,17 @@ html.dark .skeleton {
   background: transparent;
 }
 .thin-scrollbar::-webkit-scrollbar-thumb {
-  background: rgb(203 213 225);
+  background: var(--c-border);
   border-radius: 9999px;
 }
 .thin-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: rgb(148 163 184);
-}
-:root[data-theme='dark'] .thin-scrollbar::-webkit-scrollbar-thumb,
-.dark .thin-scrollbar::-webkit-scrollbar-thumb {
-  background: rgb(51 65 85);
+  background: var(--c-border-strong);
 }
 
 /* Firefox (không có ::-webkit-scrollbar) */
 @supports not selector(::-webkit-scrollbar) {
   .thin-scrollbar {
     scrollbar-width: thin;
-    scrollbar-color: rgb(203 213 225) transparent;
-  }
-  :root[data-theme='dark'] .thin-scrollbar,
-  .dark .thin-scrollbar {
-    scrollbar-color: rgb(71 85 105) transparent;
+    scrollbar-color: var(--c-border) transparent;
   }
 }

@@ -1,6 +1,6 @@
 /* Body gradient — fixed để khi scroll gradient không trượt (theo tu-vi-v1). */
 body {
-  background: linear-gradient(180deg, #ffffff 0%, #faf6ee 60%, #f4ecd8 100%);
+  background: linear-gradient(180deg, var(--c-bg) 0%, var(--c-surface-warm) 60%, var(--c-bg-soft) 100%);
   background-attachment: fixed;
 }
 

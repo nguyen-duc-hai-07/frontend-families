@@ -23,18 +23,18 @@
 
 /* === Primary CTA — gradient đỏ brand === */
 .button.primary {
-  background: linear-gradient(135deg, #b54545 0%, #8b2c2c 100%);
+  background: linear-gradient(135deg, var(--c-brand) 0%, var(--c-brand-2) 100%);
   color: #fff;
-  box-shadow: 0 2px 6px rgba(181, 69, 69, 0.25), 0 1px 2px rgba(0, 0, 0, 0.06);
+  box-shadow: 0 2px 6px var(--c-brand-tint-border), 0 1px 2px rgba(0, 0, 0, 0.06);
 }
 .button.primary:hover:not(:disabled) {
-  background: linear-gradient(135deg, #c14d4d 0%, #993131 100%);
-  box-shadow: 0 4px 12px rgba(181, 69, 69, 0.35), 0 2px 4px rgba(0, 0, 0, 0.08);
+  background: linear-gradient(135deg, var(--c-brand-2) 0%, var(--c-brand) 100%);
+  box-shadow: 0 4px 12px var(--c-brand-tint-border), 0 2px 4px rgba(0, 0, 0, 0.08);
   transform: translateY(-1px);
 }
 .button.primary:active {
   transform: translateY(0);
-  box-shadow: 0 1px 3px rgba(181, 69, 69, 0.25);
+  box-shadow: 0 1px 3px var(--c-brand-tint-border);
 }
 
 /* === Secondary — outline hiện đại (mặc định khi không có variant) === */
@@ -52,12 +52,13 @@
 
 /* === Danger === */
 .button.danger {
-  background: linear-gradient(135deg, #dc2626 0%, #a51d1d 100%);
+  background: var(--c-danger);
   color: #fff;
-  box-shadow: 0 2px 6px rgba(220, 38, 38, 0.25);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
 }
 .button.danger:hover:not(:disabled) {
-  box-shadow: 0 4px 12px rgba(220, 38, 38, 0.35);
+  opacity: 0.92;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.18);
   transform: translateY(-1px);
 }
 
