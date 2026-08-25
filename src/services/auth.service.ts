@@ -1,5 +1,12 @@
 import { oplearnClient } from './oplearnClient'
-import type { TokenResponse, LoginRequest, RegisterRequest } from '@/types'
+import type {
+  TokenResponse,
+  LoginRequest,
+  RegisterRequest,
+  VerifyOtpRequest,
+  ForgotPasswordRequest,
+  ResetPasswordRequest,
+} from '@/types'
 import { tokenStorage } from './tokenStorage'
 
 export const authService = {
@@ -10,19 +17,39 @@ export const authService = {
     return tokenData
   },
 
-  async register(payload: RegisterRequest): Promise<TokenResponse> {
-    // Backend dùng Jackson SNAKE_CASE toàn cục nên phải gửi `phone_number`
-    // (gửi `phoneNumber` sẽ không bind → phone_number NULL → vi phạm NOT NULL → 409).
+  async register(payload: RegisterRequest): Promise<void> {
+    // Backend dùng Jackson SNAKE_CASE toàn cục nên gửi `phone_number`
     const body = {
       username: payload.username,
       email: payload.email,
       password: payload.password,
       phone_number: payload.phoneNumber ?? '',
     }
-    const res = await oplearnClient.post<any>('/auth/register', body)
+    await oplearnClient.post<any>('/auth/register', body)
+  },
+
+  async verifyOtp(payload: VerifyOtpRequest): Promise<TokenResponse> {
+    const res = await oplearnClient.post<any>('/auth/verify-otp', {
+      email: payload.email,
+      otp: payload.otp,
+    })
     const tokenData = res.data?.data || res.data
     tokenStorage.saveTokens(tokenData)
     return tokenData
+  },
+
+  async forgotPassword(payload: ForgotPasswordRequest): Promise<void> {
+    await oplearnClient.post<any>('/auth/forgot-password', {
+      email: payload.email,
+    })
+  },
+
+  async resetPassword(payload: ResetPasswordRequest): Promise<void> {
+    await oplearnClient.post<any>('/auth/reset-password', {
+      email: payload.email,
+      otp: payload.otp,
+      new_password: payload.newPassword,
+    })
   },
 
   async loginWithGoogle(token: string): Promise<TokenResponse> {
