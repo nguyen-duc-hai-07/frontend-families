@@ -354,12 +354,19 @@ export default function LoginPage() {
               type="button"
               onClick={() => {
                 if (mode === 'verify-email') setMode('register')
+                else if (mode === 'reset-password') setMode('forgot-password')
                 else setMode('login')
               }}
               className="inline-flex items-center gap-1.5 text-xs font-semibold text-amber-700 dark:text-amber-400 hover:underline transition-colors"
             >
               <IconArrowLeft size={14} />
-              <span>{mode === 'verify-email' ? 'Quay lại đăng ký' : 'Quay lại Đăng nhập'}</span>
+              <span>
+                {mode === 'verify-email'
+                  ? 'Quay lại đăng ký'
+                  : mode === 'reset-password'
+                  ? 'Quay lại Quên mật khẩu'
+                  : 'Quay lại Đăng nhập'}
+              </span>
             </button>
           </div>
         )}

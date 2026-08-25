@@ -11,12 +11,34 @@ const ERROR_TRANSLATIONS: Record<string, string> = {
   'email is invalid': 'Địa chỉ email không hợp lệ.',
   'refresh token is invalid or expired': 'Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.',
   'auth.email.not_blank': 'Email không được để trống.',
+  'auth.email.invalid': 'Địa chỉ email không hợp lệ.',
+  'auth.email.not_found': 'Không tìm thấy tài khoản với địa chỉ email này.',
   'auth.otp.not_blank': 'Mã OTP không được để trống.',
+  'auth.otp.invalid': 'Mã OTP không chính xác. Vui lòng kiểm tra lại.',
+  'auth.otp.expired': 'Mã OTP đã hết hạn hoặc không tồn tại. Vui lòng yêu cầu gửi lại mã mới.',
+  'auth.user.not_found': 'Không tìm thấy tài khoản với thông tin này.',
+  'auth.password.not_blank': 'Mật khẩu không được để trống.',
+  'auth.new_password.not_blank': 'Mật khẩu mới không được để trống.',
+  'auth.new_password.min_length': 'Mật khẩu mới phải có ít nhất 8 ký tự.',
   'user.new_password.not_blank': 'Mật khẩu mới không được để trống.',
+  'user.new_password.min_length': 'Mật khẩu mới phải có ít nhất 8 ký tự.',
   'user.username.not_blank': 'Tên đăng nhập không được để trống.',
   'user.password.not_blank': 'Mật khẩu không được để trống.',
   'user.password.min_length': 'Mật khẩu phải có ít nhất 8 ký tự.',
   'user.email.invalid': 'Địa chỉ email không hợp lệ.',
+  'user.email.not_blank': 'Email không được để trống.',
+  'new_password.not_blank': 'Mật khẩu mới không được để trống.',
+  'new_password.min_length': 'Mật khẩu mới phải có ít nhất 8 ký tự.',
+  'email.not_blank': 'Email không được để trống.',
+  'otp.not_blank': 'Mã OTP không được để trống.',
+  'user_not_found': 'Không tìm thấy tài khoản với thông tin này.',
+  'email_not_found': 'Không tìm thấy tài khoản với địa chỉ email này.',
+  'email_already_exists': 'Email đã được sử dụng bởi tài khoản khác.',
+  'username_already_exists': 'Tên đăng nhập đã tồn tại. Vui lòng chọn tên khác.',
+  'invalid_otp': 'Mã OTP không chính xác. Vui lòng kiểm tra lại.',
+  'invalid_otp_code': 'Mã OTP không chính xác. Vui lòng kiểm tra lại.',
+  'otp_expired': 'Mã OTP đã hết hạn hoặc không tồn tại. Vui lòng yêu cầu gửi lại mã mới.',
+  'otp_not_found': 'Mã OTP không tồn tại hoặc đã hết hạn.',
 }
 
 function translateMessage(raw: string): string {
@@ -30,10 +52,10 @@ function translateMessage(raw: string): string {
   if (lower.includes('invalid otp')) {
     return 'Mã OTP không chính xác. Vui lòng kiểm tra lại.'
   }
-  if (lower.includes('otp') && (lower.includes('expired') || lower.includes('not exist'))) {
+  if (lower.includes('otp') && (lower.includes('expired') || lower.includes('not exist') || lower.includes('not found'))) {
     return 'Mã OTP đã hết hạn hoặc không tồn tại. Vui lòng yêu cầu gửi lại mã mới.'
   }
-  if (lower.includes('user not found')) {
+  if (lower.includes('user not found') || lower.includes('email not found')) {
     return 'Không tìm thấy tài khoản với thông tin này.'
   }
   if (lower.includes('username already exist')) {
@@ -62,17 +84,31 @@ export function getErrorMessage(error: unknown): string {
         const tr = translateMessage(resData.data.code)
         if (tr !== resData.data.code) return tr
       }
+      if (resData.data?.error_description && typeof resData.data.error_description === 'string') {
+        return translateMessage(resData.data.error_description)
+      }
+      if (resData.data?.error_message && typeof resData.data.error_message === 'string') {
+        return translateMessage(resData.data.error_message)
+      }
       if (resData.data?.message && typeof resData.data.message === 'string') {
         return translateMessage(resData.data.message)
+      }
+      if (resData.error_description && typeof resData.error_description === 'string') {
+        return translateMessage(resData.error_description)
+      }
+      if (resData.error_message && typeof resData.error_message === 'string') {
+        return translateMessage(resData.error_message)
       }
       if (resData.message && typeof resData.message === 'string') {
         const tr = translateMessage(resData.message)
         if (tr !== resData.message && !resData.message.includes('Request')) return tr
       }
       if (resData.error && typeof resData.error === 'string') return translateMessage(resData.error)
-      if (Array.isArray(resData.errors)) return resData.errors.map(String).join(', ')
+      if (Array.isArray(resData.errors)) return resData.errors.map((e) => translateMessage(String(e))).join(', ')
       if (resData.errors && typeof resData.errors === 'object') {
-        return Object.entries(resData.errors).map(([k, v]) => `${k}: ${v}`).join('; ')
+        return Object.entries(resData.errors)
+          .map(([k, v]) => `${k}: ${translateMessage(String(v))}`)
+          .join('; ')
       }
       if (typeof resData.data === 'string') return translateMessage(resData.data)
       if (resData.data && (resData.data as any).detail) return translateMessage(String((resData.data as any).detail))

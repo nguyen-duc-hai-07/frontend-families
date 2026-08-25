@@ -18,12 +18,13 @@ export const authService = {
   },
 
   async register(payload: RegisterRequest): Promise<void> {
-    // Backend dùng Jackson SNAKE_CASE toàn cục nên gửi `phone_number`
+    // Gửi cả snake_case và camelCase để tương thích toàn diện với backend Jackson
     const body = {
       username: payload.username,
       email: payload.email,
       password: payload.password,
-      phone_number: payload.phoneNumber ?? '',
+      phone_number: payload.phoneNumber ?? payload.phone_number ?? '',
+      phoneNumber: payload.phoneNumber ?? payload.phone_number ?? '',
     }
     await oplearnClient.post<any>('/auth/register', body)
   },
@@ -32,6 +33,9 @@ export const authService = {
     const res = await oplearnClient.post<any>('/auth/verify-otp', {
       email: payload.email,
       otp: payload.otp,
+      otp_code: payload.otp_code ?? payload.otp,
+      otpCode: payload.otpCode ?? payload.otp,
+      code: payload.code ?? payload.otp,
     })
     const tokenData = res.data?.data || res.data
     tokenStorage.saveTokens(tokenData)
@@ -41,14 +45,24 @@ export const authService = {
   async forgotPassword(payload: ForgotPasswordRequest): Promise<void> {
     await oplearnClient.post<any>('/auth/forgot-password', {
       email: payload.email,
+      username: payload.username ?? payload.email,
     })
   },
 
   async resetPassword(payload: ResetPasswordRequest): Promise<void> {
+    const newPwd = payload.newPassword || payload.new_password || payload.password || ''
+    const confirmPwd = payload.confirmPassword || payload.confirm_password || newPwd
     await oplearnClient.post<any>('/auth/reset-password', {
       email: payload.email,
       otp: payload.otp,
-      new_password: payload.newPassword,
+      otp_code: payload.otp_code ?? payload.otp,
+      otpCode: payload.otpCode ?? payload.otp,
+      code: payload.code ?? payload.otp,
+      new_password: newPwd,
+      newPassword: newPwd,
+      password: newPwd,
+      confirm_password: confirmPwd,
+      confirmPassword: confirmPwd,
     })
   },
 
