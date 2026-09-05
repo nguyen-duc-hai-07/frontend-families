@@ -1,4 +1,6 @@
-// --- General API Response Schemas ---
+// =========================================================
+// General API Response Schemas
+// =========================================================
 
 export interface ResponseGeneral<T> {
   status: number
@@ -10,6 +12,10 @@ export interface ResponseGeneral<T> {
 export interface PageResponse<T> {
   content: T[]
   amount: number
+  totalElements?: number
+  totalPages?: number
+  page?: number
+  size?: number
 }
 
 export interface CursorPageResponse<T> {
@@ -31,7 +37,9 @@ export interface FileUploadResponse {
   contentType?: string
 }
 
-// --- Auth & User ---
+// =========================================================
+// Auth & User Schemas
+// =========================================================
 
 export enum UserRole {
   USER = 'USER',
@@ -46,6 +54,8 @@ export interface UserResponse {
   phone_number?: string
   phone?: string
   role: UserRole | string
+  avatarUrl?: string
+  avatar_url?: string
   createdAt?: string
   created_at?: string
   updatedAt?: string
@@ -54,9 +64,10 @@ export interface UserResponse {
 
 export interface TokenResponse {
   accessToken: string
-  refreshToken: string
+  refreshToken?: string
   tokenType?: string
   expiresIn?: number
+  user?: UserResponse
 }
 
 export interface LoginRequest {
@@ -107,281 +118,13 @@ export interface GoogleLoginRequest {
   token: string
 }
 
-// --- Poem ---
+// =========================================================
+// Theme & UI Types
+// =========================================================
 
-export interface PoemTranslation {
-  translator?: string
-  content: string
-  sort_order?: number
-}
+export type ThemeMode = 'light' | 'dark' | 'system'
 
-export interface LibraryStats {
-  total_poems: number
-  total_authors: number
-  total_countries: number
-  viet_count: number
-  han_count: number
-  foreign_count: number
-}
-
-export interface PoemResponse {
-  id: number
-  name: string
-  description?: string
-  year?: number
-  content: string
-  transliteration?: string
-  translation?: string
-  meaning?: string
-  language?: string
-  era?: string
-  genreName?: string
-  authorName?: string
-  authorId?: number
-  // API trả snake_case; giữ cả hai để an toàn
-  author_name?: string
-  author_id?: number
-  genre_name?: string
-  translations?: PoemTranslation[]
-  statistics?: PoemStatisticsResponse
-}
-
-export interface PoemStatisticsResponse {
-  poem_id?: number
-  poemId?: number
-  view_count?: number
-  viewCount?: number
-  favorite_count?: number
-  favoriteCount?: number
-  share_count?: number
-  shareCount?: number
-  comment_count?: number
-  commentCount?: number
-}
-
-/** Một nhánh trong cây duyệt phân cấp (Ngôn ngữ → Thời kỳ → Thể thơ → Tác giả). */
-export interface FacetItem {
-  id: number | null
+export interface BreadcrumbItem {
   label: string
-  count: number
+  to?: string
 }
-
-export interface PoemRequest {
-  name: string
-  description?: string
-  year?: number
-  content: string
-  transliteration?: string
-  translation?: string
-  language?: string
-  genreId?: number
-  authorId?: number
-}
-
-// --- Author ---
-
-export interface AuthorResponse {
-  id: number
-  name: string
-  birthYear?: number
-  achievement?: string
-  hometown?: string
-  /** Ảnh chân dung + tiểu sử (crawl thivien). API trả snake_case → đọc cả hai. */
-  avatarUrl?: string
-  avatar_url?: string
-  /** Key ảnh tự crawl trên RustFS (dạng "<uuid>.<ext>"); link = `${env.AVATAR_BASE_URL}/${avatar_local}`. */
-  avatarLocal?: string
-  avatar_local?: string
-  bio?: string
-  /** Quốc gia tác giả (crawl thivien). API trả snake_case → đọc cả hai. */
-  country?: string
-  countryId?: number
-  country_id?: number
-  /** Số bài thơ (API trả snake_case) */
-  poemCount?: number
-  poem_count?: number
-  /** Số tác phẩm văn xuôi (API trả snake_case) */
-  storyCount?: number
-  story_count?: number
-}
-
-export interface AuthorRequest {
-  name: string
-  birthYear?: number
-  achievement?: string
-  hometown?: string
-}
-
-// --- Genre ---
-
-export interface GenreResponse {
-  id: number
-  name: string
-}
-
-export interface GenreRequest {
-  name: string
-}
-
-// --- Poem Composition (Góc Sáng Tác) ---
-
-export type PoemCompositionStatus = 'PUBLISHED' | 'DRAFT' | 'PRIVATE'
-
-export interface PoemCompositionResponse {
-  id: number
-  userId?: number
-  user_id?: number
-  username?: string
-  content: string
-  penName?: string
-  pen_name?: string
-  title: string
-  genreId?: number
-  genre_id?: number
-  genreName?: string
-  genre_name?: string
-  status: PoemCompositionStatus
-  createdAt?: string
-  created_at?: string
-}
-
-export interface PoemCompositionRequest {
-  title: string
-  content: string
-  penName?: string
-  pen_name?: string
-  genreId?: number
-  genre_id?: number
-  status?: PoemCompositionStatus
-}
-
-// --- Comment & Reply ---
-
-export interface CommentResponse {
-  id: number
-  content: string
-  poemId?: number
-  poem_id?: number
-  poemCompositionId?: number
-  poem_composition_id?: number
-  userId?: number
-  user_id?: number
-  username: string
-  createdAt?: string
-  created_at?: string
-}
-
-export interface CommentRequest {
-  poemId?: number
-  poem_id?: number
-  poemCompositionId?: number
-  poem_composition_id?: number
-  content: string
-}
-
-export interface ReplyResponse {
-  id: number
-  content: string
-  commentId?: number
-  userId?: number
-  username: string
-  createdAt?: string
-  contentComment?: string
-  content_comment?: string
-  poemId?: number
-  poem_id?: number
-  /** API trả snake_case, không có transform ở client */
-  comment_id?: number
-  user_id?: number
-  created_at?: string
-}
-
-export interface ReplyRequest {
-  commentId: number
-  content: string
-}
-
-// --- Feedback ---
-
-export enum FeedbackStatus {
-  PENDING = 'PENDING',
-  RESOLVED = 'RESOLVED',
-  APPROVED = 'RESOLVED',
-  REJECTED = 'REJECTED',
-}
-
-export interface FeedbackResponse {
-  id: number
-  content: string
-  userId?: number
-  user_id?: number
-  poemId?: number
-  poem_id?: number
-  username: string
-  createdAt?: string
-  created_at?: string
-  status: FeedbackStatus | string
-}
-
-export interface FeedbackRequest {
-  poemId: number
-  content: string
-}
-
-// --- User Preferences & Recommendation ---
-export interface UserPreferences {
-  authorIds: number[]
-  genreIds: number[]
-  eras: string[]
-}
-
-export interface RandomPoemsParams {
-  authorIds?: number[]
-  genreIds?: number[]
-  eras?: string[]
-}
-
-// --- Reader Mode ---
-export type ReaderStyleMode = 'modern-light' | 'modern-dark' | 'classic-sepia'
-
-// --- Văn xuôi / Truyện ngắn (API trả snake_case) ---
-export interface StoryChapterMeta {
-  seq: number
-  title?: string
-  word_count?: number
-  char_count?: number
-}
-
-export interface StoryResponse {
-  id: number
-  title: string
-  author?: string
-  author_url?: string
-  author_id?: number
-  year?: number
-  genre?: string
-  category?: string
-  collection?: string
-  source?: string
-  type?: string
-  chapter_count?: number
-  char_count?: number
-  word_count?: number
-  chapters?: StoryChapterMeta[]
-}
-
-export interface StoryChapterResponse {
-  id?: number
-  story_id: number
-  seq: number
-  title?: string
-  word_count?: number
-  char_count?: number
-  content: string
-}
-
-export interface StoryCollection {
-  collection: string
-  count: number
-}
-

@@ -1,6 +1,5 @@
-import { createContext, useCallback, useContext, useRef, useState, type ReactNode } from 'react'
-
-type ToastType = 'error' | 'success' | 'info'
+import { useCallback, useRef, useState, type ReactNode } from 'react'
+import { ToastContext, type ToastType } from './toast-context'
 
 interface ToastItem {
   id: number
@@ -9,24 +8,15 @@ interface ToastItem {
   type: ToastType
 }
 
-interface ToastContextType {
-  /** Hiện thông báo nổi góc phải, tự ẩn sau 4 giây. Mặc định type 'error'. */
-  toast: (message: string, type?: ToastType, title?: string) => void
-}
-
-const ToastContext = createContext<ToastContextType | null>(null)
-
-/** Trần số toast hiển thị cùng lúc — giữ các toast mới nhất. */
 const MAX_TOASTS = 4
-/** Chống spam toast trùng nội dung (vd backend down → hàng loạt request fail). */
-const DEDUP_MS = 4000
+const DEDUP_MS = 3000
 const DURATION_MS = 4000
 
-/** Icon glyph theo type — character đơn giản trong badge tròn. */
 function iconFor(type: ToastType): string {
   switch (type) {
     case 'success': return '✓'
     case 'error': return '!'
+    case 'warning': return '⚠'
     default: return 'i'
   }
 }
@@ -34,6 +24,7 @@ function iconFor(type: ToastType): string {
 const DEFAULT_TITLES: Record<ToastType, string> = {
   error: 'Có lỗi xảy ra',
   success: 'Thành công',
+  warning: 'Cảnh báo',
   info: 'Thông báo',
 }
 
@@ -47,7 +38,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
   }, [])
 
   const toast = useCallback(
-    (message: string, type: ToastType = 'error', title?: string) => {
+    (message: string, type: ToastType = 'info', title?: string) => {
       const key = `${type}|${title ?? ''}|${message}`
       const now = Date.now()
       const prev = lastShown.current.get(key)
@@ -95,10 +86,4 @@ export function ToastProvider({ children }: { children: ReactNode }) {
       )}
     </ToastContext.Provider>
   )
-}
-
-export function useToast(): ToastContextType {
-  const ctx = useContext(ToastContext)
-  if (!ctx) throw new Error('useToast must be used within ToastProvider')
-  return ctx
 }

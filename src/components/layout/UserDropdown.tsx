@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '@/hooks/useAuth'
 import { PATHS } from '@/routes/paths'
+import { IconUser, IconDashboard, IconLogOut } from '@/components/ui/icons'
 
 export function UserDropdown() {
   const { user, isAdmin, logout } = useAuth()
@@ -52,14 +53,13 @@ export function UserDropdown() {
     navigate(PATHS.HOME)
   }
 
-  // Ưu tiên tên hiển thị (vd tên thật từ Google) thay vì username/email
-  const displayName = (user?.displayName || user?.username || '').trim()
+  const displayName = (user?.displayName || user?.username || 'Người dùng').trim()
 
   return (
     <div className="relative" ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-2 p-1.5 rounded-md hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+        className="flex items-center gap-2 p-1.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
       >
         {avatarUrl ? (
           <img
@@ -72,16 +72,16 @@ export function UserDropdown() {
             {displayName.charAt(0).toUpperCase()}
           </div>
         )}
-        <span className="hidden sm:inline text-sm font-medium text-slate-700 dark:text-slate-200">
+        <span className="hidden sm:inline text-sm font-medium text-slate-700 dark:text-slate-200 max-w-[120px] truncate">
           {displayName}
         </span>
-        <span className="text-xs text-slate-400">▼</span>
+        <span className="text-[10px] text-slate-400">▼</span>
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-52 bg-white dark:bg-slate-800 rounded-xl shadow-lg border border-slate-200 dark:border-slate-700 py-2 z-50 animate-fade-in">
+        <div className="absolute right-0 mt-2 w-56 bg-white dark:bg-slate-800 rounded-xl shadow-lg border border-slate-200 dark:border-slate-700 py-2 z-50 animate-fade-in">
           <div className="px-4 py-2 border-b border-slate-100 dark:border-slate-700">
-            <p className="text-xs text-slate-400">Tài khoản</p>
+            <p className="text-xs text-slate-400">Đăng nhập với tư cách</p>
             <p className="text-sm font-semibold text-slate-800 dark:text-slate-100 truncate">
               {displayName}
             </p>
@@ -95,51 +95,30 @@ export function UserDropdown() {
           <Link
             to={PATHS.PROFILE}
             onClick={() => setIsOpen(false)}
-            className="flex items-center gap-2 px-4 py-2 text-sm text-slate-700 dark:text-slate-200 hover:bg-amber-50 dark:hover:bg-slate-700/50 transition-colors"
+            className="flex items-center gap-2.5 px-4 py-2.5 text-sm text-slate-700 dark:text-slate-200 hover:bg-amber-50 dark:hover:bg-slate-700/50 transition-colors"
           >
-            <span>👤</span> Thông tin cá nhân
-          </Link>
-
-          <Link
-            to={`${PATHS.PROFILE}#preferences`}
-            onClick={() => setIsOpen(false)}
-            className="flex items-center gap-2 px-4 py-2 text-sm text-amber-800 dark:text-amber-300 font-medium hover:bg-amber-50 dark:hover:bg-slate-700/50 transition-colors"
-          >
-            <span>✨</span> Sở thích & Gợi ý thơ
-          </Link>
-
-          <Link
-            to={PATHS.FAVORITES}
-            onClick={() => setIsOpen(false)}
-            className="flex items-center gap-2 px-4 py-2 text-sm text-slate-700 dark:text-slate-200 hover:bg-amber-50 dark:hover:bg-slate-700/50 transition-colors"
-          >
-            <span aria-hidden="true" className="text-rose-500">♥</span> Bài thơ yêu thích
-          </Link>
-
-          <Link
-            to={PATHS.HIGHLIGHTS}
-            onClick={() => setIsOpen(false)}
-            className="flex items-center gap-2 px-4 py-2 text-sm text-slate-700 dark:text-slate-200 hover:bg-amber-50 dark:hover:bg-slate-700/50 transition-colors"
-          >
-            <span aria-hidden="true" className="text-amber-500">✎</span> Ghi chú của tôi
+            <IconUser size={16} className="text-slate-500" />
+            <span>Thông tin cá nhân</span>
           </Link>
 
           {isAdmin && (
             <Link
               to={PATHS.ADMIN}
               onClick={() => setIsOpen(false)}
-              className="flex items-center gap-2 px-4 py-2 text-sm font-semibold text-amber-700 dark:text-amber-400 hover:bg-amber-50 dark:hover:bg-slate-700/50 transition-colors"
+              className="flex items-center gap-2.5 px-4 py-2.5 text-sm font-semibold text-amber-700 dark:text-amber-400 hover:bg-amber-50 dark:hover:bg-slate-700/50 transition-colors"
             >
-              Admin Dashboard
+              <IconDashboard size={16} className="text-amber-600" />
+              <span>Trang quản trị (Admin)</span>
             </Link>
           )}
 
           <div className="border-t border-slate-100 dark:border-slate-700 mt-1 pt-1">
             <button
               onClick={handleLogout}
-              className="w-full text-left flex items-center gap-2 px-4 py-2 text-sm text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition-colors"
+              className="w-full text-left flex items-center gap-2.5 px-4 py-2.5 text-sm text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition-colors"
             >
-              Đăng xuất
+              <IconLogOut size={16} />
+              <span>Đăng xuất</span>
             </button>
           </div>
         </div>

@@ -1,4 +1,4 @@
-import { oplearnClient } from './oplearnClient'
+import { apiClient } from './apiClient'
 import type {
   TokenResponse,
   LoginRequest,
@@ -11,14 +11,13 @@ import { tokenStorage } from './tokenStorage'
 
 export const authService = {
   async login(payload: LoginRequest): Promise<TokenResponse> {
-    const res = await oplearnClient.post<any>('/auth/login', payload)
+    const res = await apiClient.post<any>('/auth/login', payload)
     const tokenData = res.data?.data || res.data
     tokenStorage.saveTokens(tokenData)
     return tokenData
   },
 
   async register(payload: RegisterRequest): Promise<void> {
-    // Gửi cả snake_case và camelCase để tương thích toàn diện với backend Jackson
     const body = {
       username: payload.username,
       email: payload.email,
@@ -26,11 +25,11 @@ export const authService = {
       phone_number: payload.phoneNumber ?? payload.phone_number ?? '',
       phoneNumber: payload.phoneNumber ?? payload.phone_number ?? '',
     }
-    await oplearnClient.post<any>('/auth/register', body)
+    await apiClient.post<any>('/auth/register', body)
   },
 
   async verifyOtp(payload: VerifyOtpRequest): Promise<TokenResponse> {
-    const res = await oplearnClient.post<any>('/auth/verify-otp', {
+    const res = await apiClient.post<any>('/auth/verify-otp', {
       email: payload.email,
       otp: payload.otp,
       otp_code: payload.otp_code ?? payload.otp,
@@ -43,7 +42,7 @@ export const authService = {
   },
 
   async forgotPassword(payload: ForgotPasswordRequest): Promise<void> {
-    await oplearnClient.post<any>('/auth/forgot-password', {
+    await apiClient.post<any>('/auth/forgot-password', {
       email: payload.email,
       username: payload.username ?? payload.email,
     })
@@ -52,7 +51,7 @@ export const authService = {
   async resetPassword(payload: ResetPasswordRequest): Promise<void> {
     const newPwd = payload.newPassword || payload.new_password || payload.password || ''
     const confirmPwd = payload.confirmPassword || payload.confirm_password || newPwd
-    await oplearnClient.post<any>('/auth/reset-password', {
+    await apiClient.post<any>('/auth/reset-password', {
       email: payload.email,
       otp: payload.otp,
       otp_code: payload.otp_code ?? payload.otp,
@@ -67,19 +66,16 @@ export const authService = {
   },
 
   async loginWithGoogle(token: string): Promise<TokenResponse> {
-    const res = await oplearnClient.post<any>('/auth/login/google', { token })
+    const res = await apiClient.post<any>('/auth/login/google', { token })
     const tokenData = res.data?.data || res.data
     tokenStorage.saveTokens(tokenData)
     return tokenData
   },
 
   async logout(): Promise<void> {
-    // Refresh token nằm ở cookie HttpOnly (withCredentials tự gửi) → luôn gọi
-    // endpoint để BE thu hồi token + xoá cookie. Kèm token cũ ở body nếu còn
-    // sót trong localStorage (user chưa migrate).
     try {
       const legacy = tokenStorage.getRefreshToken()
-      await oplearnClient.post(
+      await apiClient.post(
         '/auth/logout',
         legacy ? { refresh_token: legacy, refreshToken: legacy } : {},
       )

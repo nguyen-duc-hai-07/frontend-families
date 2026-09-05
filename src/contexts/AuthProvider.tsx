@@ -2,7 +2,7 @@ import { useState, useEffect, type ReactNode } from 'react'
 import { STORAGE_KEYS } from '@/constants'
 import { authService } from '@/services/auth.service'
 import { tokenStorage } from '@/services/tokenStorage'
-import { resetSessionExpired } from '@/services/oplearnClient'
+import { resetSessionExpired } from '@/services/apiClient'
 import { decodeJwt } from '@/utils/jwt'
 import { storage } from '@/utils/storage'
 import { AuthContext, type AuthUser } from './auth-context'
@@ -11,12 +11,14 @@ import { UserRole } from '@/types'
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<AuthUser | null>(() => storage.get<AuthUser>(STORAGE_KEYS.USER))
 
-  // Interceptor bắn 'poems-session-expired' khi refresh token hết hạn/không hợp lệ
-  // → gỡ user khỏi state để ProtectedRoute điều hướng SPA (không reload cứng).
   useEffect(() => {
     const onExpired = () => setUser(null)
+    window.addEventListener('auth-session-expired', onExpired)
     window.addEventListener('poems-session-expired', onExpired)
-    return () => window.removeEventListener('poems-session-expired', onExpired)
+    return () => {
+      window.removeEventListener('auth-session-expired', onExpired)
+      window.removeEventListener('poems-session-expired', onExpired)
+    }
   }, [])
 
   const processTokens = (tokensData: any, usernameFallback: string, displayName?: string) => {
@@ -53,8 +55,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       roles,
       role,
     }
+
     tokenStorage.saveUser(nextUser as any)
-    resetSessionExpired() // đăng nhập lại → gỡ cờ chặn refresh của phiên cũ
+    resetSessionExpired()
     setUser(nextUser)
   }
 
@@ -64,7 +67,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   const loginWithGoogle = async (googleToken: string) => {
-    // Google credential (ID token) chứa name/email/picture — lấy tên thật để hiển thị
     const gClaims = decodeJwt(googleToken)
     const tokens = await authService.loginWithGoogle(googleToken)
     processTokens(tokens, gClaims?.name || gClaims?.email || 'Google User', gClaims?.name)

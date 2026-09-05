@@ -2,7 +2,7 @@ interface PageSizeSelectProps {
   value: number
   onChange: (size: number) => void
   options?: number[]
-  /** Nhãn đơn vị, mặc định "bài" */
+  /** Nhãn đơn vị, mặc định "mục" */
   unit?: string
   /** Kiểu giao diện */
   variant?: 'default' | 'admin'
@@ -14,7 +14,7 @@ export function PageSizeSelect({
   value,
   onChange,
   options = [10, 20, 50, 100],
-  unit = 'bài',
+  unit = 'mục',
   variant = 'default',
   className = '',
 }: PageSizeSelectProps) {
@@ -54,4 +54,3 @@ export function PageSizeSelect({
     </label>
   )
 }
-

@@ -3,11 +3,7 @@ import { Outlet, useLocation } from 'react-router-dom'
 import { Skeleton } from '@/components/ui/Skeleton'
 import { Header } from './Header'
 import { Footer } from './Footer'
-import { BackToTop } from './BackToTop'
-import { useReaderMode } from '@/contexts/ReaderModeContext'
-import { GuestCTAModal } from '@/components/common/GuestCTAModal'
 
-/** Đổi trang (URL path đổi) → tự cuộn lên đầu (SPA không tự reset scroll). */
 function ScrollToTop() {
   const { pathname } = useLocation()
   useEffect(() => {
@@ -17,13 +13,11 @@ function ScrollToTop() {
 }
 
 export function MainLayout() {
-  const { mode } = useReaderMode()
-
   return (
-    <div className={`min-h-screen flex flex-col overflow-x-hidden transition-colors duration-300 mode-${mode}`}>
+    <div className="min-h-screen flex flex-col bg-[var(--c-bg)] text-[var(--c-text)] transition-colors duration-200">
       <ScrollToTop />
       <Header />
-      <main className="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <main className="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <Suspense
           fallback={
             <div className="py-12 space-y-4 max-w-4xl mx-auto">
@@ -37,8 +31,6 @@ export function MainLayout() {
         </Suspense>
       </main>
       <Footer />
-      <BackToTop />
-      <GuestCTAModal />
     </div>
   )
 }

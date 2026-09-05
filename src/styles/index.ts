@@ -13,11 +13,7 @@ import './utilities/toast.css'
 import './components/nav.css'
 import './components/form.css'
 import './components/footer.css'
-import './components/home.css'
-import './components/poems.css'
-import './components/comments.css'
 
 // === Theme ===
 import './theme/body-gradient.css'
 import './theme/dark.css'
-import './theme/reader-mode.css'

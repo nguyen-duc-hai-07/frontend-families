@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState, useCallback } from 'react'
 import { env } from '@/config/env'
 import { useAuth } from '@/hooks/useAuth'
-import { useToast } from '@/contexts/ToastContext'
+import { useToast } from '@/hooks/useToast'
 import { getErrorMessage } from '@/utils/error'
 
 declare global {

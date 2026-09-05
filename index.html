@@ -2,21 +2,18 @@
 <html lang="vi">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
-    <link rel="icon" type="image/png" sizes="180x180" href="/favicon-180.png" />
-    <link rel="apple-touch-icon" href="/favicon-180.png" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Tiểu Thi Hào – Kho tàng thơ ca Việt Nam</title>
-    <meta name="description" content="Kho tàng thơ ca Việt Nam và thế giới — tra cứu theo tác giả, thể loại, đọc nguyên tác chữ Hán kèm phiên âm, dịch nghĩa và nhiều bản dịch." />
-    <meta property="og:site_name" content="Tiểu Thi Hào" />
+    <title>React Base Project</title>
+    <meta name="description" content="Khung dự án chuẩn React 19 + TypeScript + Vite với kiến trúc module, xác thực JWT, RBAC và Dark Mode." />
+    <meta property="og:title" content="React Base Project" />
+    <meta property="og:description" content="Khung dự án chuẩn React 19 + TypeScript + Vite với kiến trúc module, xác thực JWT, RBAC và Dark Mode." />
     <meta property="og:type" content="website" />
-    <meta property="og:title" content="Tiểu Thi Hào – Kho tàng thơ ca Việt Nam" />
-    <meta property="og:description" content="Kho tàng thơ ca Việt Nam và thế giới — tra cứu theo tác giả, thể loại, đọc nguyên tác kèm phiên âm, dịch nghĩa và nhiều bản dịch." />
-    <meta property="og:image" content="/favicon-180.png" />
-    <!-- Google Fonts: Merriweather, Inter, Playfair Display & Plus Jakarta Sans -->
+
+    <!-- Google Fonts: Inter & Plus Jakarta Sans -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Merriweather:ital,wght@0,300;0,400;0,700;1,300;1,400&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Plus+Jakarta+Sans:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     
     <!-- Google Identity Services (Sign-In with Google) -->
     <script src="https://accounts.google.com/gsi/client" async defer></script>
@@ -29,43 +26,41 @@
         theme: {
           extend: {
             fontFamily: {
-              sans: ['Inter', 'Plus Jakarta Sans', 'sans-serif'],
-              serif: ['Merriweather', 'Playfair Display', 'Georgia', 'serif'],
-            },
-            colors: {
-              sepia: {
-                50: '#fbf0d9',
-                100: '#f7e7c4',
-                200: '#edd49b',
-                300: '#e1bd70',
-                700: '#734e1b',
-                800: '#5c3d14',
-                900: '#432a0d',
-              }
+              sans: ['Inter', 'Plus Jakarta Sans', 'system-ui', 'sans-serif'],
             }
           }
         }
       }
     </script>
 
+    <!-- Pre-paint Theme Script (Chống nhấp nháy FOUC) -->
     <script>
       ;(function () {
         try {
-          var mode = localStorage.getItem('poems_reader_style_mode') || 'classic-sepia'
-          document.documentElement.setAttribute('data-reader-mode', mode)
-          // data-theme phải set cùng .dark: token CSS (--c-ink-*) đổi theo [data-theme]
-          document.documentElement.setAttribute('data-theme', mode === 'modern-dark' ? 'dark' : 'light')
-          if (mode === 'modern-dark') {
+          var saved = localStorage.getItem('app_theme')
+          var isDark = false
+          if (saved === 'dark') {
+            isDark = true
+          } else if (saved === 'light') {
+            isDark = false
+          } else {
+            // system or default
+            isDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+          }
+
+          document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light')
+          if (isDark) {
             document.documentElement.classList.add('dark')
+          } else {
+            document.documentElement.classList.remove('dark')
           }
         } catch (e) {
-          document.documentElement.setAttribute('data-reader-mode', 'classic-sepia')
           document.documentElement.setAttribute('data-theme', 'light')
         }
       })()
     </script>
 
-    <!-- Nền tối ngay từ paint đầu tiên để tránh chớp trắng trước khi CSS bundle tải -->
+    <!-- Nền tối ngay từ paint đầu tiên -->
     <style>
       html.dark, html.dark body { background-color: #0a0e18; }
     </style>

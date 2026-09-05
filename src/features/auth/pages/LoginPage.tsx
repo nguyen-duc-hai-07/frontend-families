@@ -14,7 +14,7 @@ import { GoogleLoginButton } from '@/components/auth/GoogleLoginButton'
 import { useAuth } from '@/hooks/useAuth'
 import { PATHS } from '@/routes/paths'
 import { getErrorMessage } from '@/utils/error'
-import { useToast } from '@/contexts/ToastContext'
+import { useToast } from '@/hooks/useToast'
 import { Seo } from '@/components/common/Seo'
 
 type AuthMode = 'login' | 'register' | 'verify-email' | 'forgot-password' | 'reset-password'
@@ -381,7 +381,7 @@ export default function LoginPage() {
                 Chào Mừng Trở Lại
               </h2>
               <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
-                Đăng nhập để bình luận, lưu thơ yêu thích và sáng tác.
+                Đăng nhập để tiếp tục và trải nghiệm đầy đủ các tính năng.
               </p>
             </div>
 
@@ -452,10 +452,10 @@ export default function LoginPage() {
           <form onSubmit={handleRegister} className="space-y-4">
             <div className="mb-4">
               <h2 className="text-xl font-serif font-bold text-slate-900 dark:text-amber-100">
-                Tạo Tài Khoản Độc Giả
+                Tạo Tài Khoản Mới
               </h2>
               <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
-                Nhập thông tin bên dưới để nhận mã OTP xác thực email.
+                Nhập thông tin bên dưới để đăng ký tài khoản.
               </p>
             </div>
 

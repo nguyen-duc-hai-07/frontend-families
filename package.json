@@ -1,7 +1,8 @@
 {
-  "name": "frontend-poems",
+  "name": "react-base",
   "private": true,
   "version": "1.0.0",
+  "description": "Production-ready React 19 + TypeScript + Vite base template with modular architecture, auth & RBAC, theme switching, Axios interceptors, and reusable UI components.",
   "type": "module",
   "scripts": {
     "dev": "vite",
