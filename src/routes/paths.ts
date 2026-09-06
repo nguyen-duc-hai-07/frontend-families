@@ -1,18 +1,10 @@
 export const PATHS = {
   HOME: '/',
-  USERS: '/users',
-  USER_DETAIL: '/users/:id',
-  LOGIN: '/login',
-  REGISTER: '/register',
-  FORGOT_PASSWORD: '/forgot-password',
-  RESET_PASSWORD: '/reset-password',
-  VERIFY_EMAIL: '/verify-email',
-  PROFILE: '/profile',
-
-  // Admin Dashboard routes
-  ADMIN: '/admin',
-  ADMIN_USERS: '/admin/users',
-  ADMIN_SETTINGS: '/admin/settings',
+  FAMILY_TREE: '/family-tree',
+  PERSONS: '/persons',
+  PERSON_DETAIL: '/persons/:id',
+  RELATIONS: '/relations',
+  FAMILY_INFO: '/family-info',
 } as const
 
 /**
@@ -31,4 +23,4 @@ export function slugify(input: string): string {
     .replace(/-+$/g, '')
 }
 
-export const toUserDetail = (id: number | string) => `/users/${id}`
+export const toPersonDetail = (id: number | string) => `/persons/${id}`

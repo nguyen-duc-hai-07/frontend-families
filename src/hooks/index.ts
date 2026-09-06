@@ -1,4 +1,4 @@
-export { useAuth } from './useAuth'
+export { useFamily } from './useFamily'
 export { useTheme } from './useTheme'
 export { useToast } from './useToast'
 export { useDebounce } from './useDebounce'

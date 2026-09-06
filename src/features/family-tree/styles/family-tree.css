@@ -1,0 +1,288 @@
+/* ==========================================================================
+   Family Tree Visualization Styles
+   Orthogonal Top-Down Tree Hierarchy with CSS Pseudo Elements
+   ========================================================================== */
+
+:root {
+  --tree-line-color: #cbd5e1;
+  --tree-line-width: 2px;
+  --tree-card-bg: #ffffff;
+  --tree-card-border: #e2e8f0;
+  --tree-card-shadow: 0 4px 12px rgba(0, 0, 0, 0.06), 0 1px 3px rgba(0, 0, 0, 0.04);
+  --tree-stem-length: 28px;
+}
+
+:root[data-theme='dark'],
+:root.dark,
+.dark {
+  --tree-line-color: #334155;
+  --tree-card-bg: #111827;
+  --tree-card-border: #1e293b;
+  --tree-card-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
+}
+
+/* Canvas & Viewport Container */
+.family-tree-viewport {
+  position: relative;
+  width: 100%;
+  height: calc(100vh - 210px);
+  min-height: 560px;
+  overflow: hidden;
+  background-color: var(--c-bg);
+  background-image: 
+    radial-gradient(circle at 50% 50%, rgba(217, 119, 6, 0.03) 0%, transparent 60%),
+    radial-gradient(var(--c-border) 1px, transparent 1px);
+  background-size: 100% 100%, 24px 24px;
+  background-position: 0 0, 0 0;
+  user-select: none;
+  cursor: grab;
+  border-radius: 1rem;
+  border: 1px solid var(--c-border);
+  transition: background-color 0.2s ease;
+}
+
+.family-tree-viewport.is-dragging {
+  cursor: grabbing !important;
+}
+
+/* Transformable Canvas Layer */
+.family-tree-canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform-origin: 0 0;
+  will-change: transform;
+  display: inline-block;
+  min-width: 100%;
+  min-height: 100%;
+  padding: 40px;
+}
+
+.family-tree-canvas.smooth-transition {
+  transition: transform 0.35s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+/* Roots Wrapper */
+.family-tree-roots-container {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 48px;
+  padding: 20px 40px 80px 40px;
+  margin: 0 auto;
+}
+
+/* ==========================================================================
+   Orthogonal Tree Connector Lines (Top-Down Hierarchy)
+   ========================================================================== */
+
+/* Subtree / Children flex row */
+.tree-children {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding-top: var(--tree-stem-length);
+  position: relative;
+  margin: 0;
+  padding-left: 0;
+  list-style: none;
+}
+
+/* Vertical stem down from parent */
+.tree-children::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  border-left: var(--tree-line-width) solid var(--tree-line-color);
+  width: 0;
+  height: var(--tree-stem-length);
+  z-index: 1;
+}
+
+/* Individual node column */
+.tree-node {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  padding: 0 16px;
+  list-style: none;
+}
+
+/* Horizontal bracket connecting sibling branches (Ngoặc vuông) */
+.tree-node::before,
+.tree-node::after {
+  content: '';
+  position: absolute;
+  top: calc(-1 * var(--tree-stem-length));
+  right: 50%;
+  border-top: var(--tree-line-width) solid var(--tree-line-color);
+  width: 50%;
+  height: var(--tree-stem-length);
+  z-index: 1;
+}
+
+.tree-node::after {
+  right: auto;
+  left: 50%;
+  border-left: var(--tree-line-width) solid var(--tree-line-color);
+}
+
+/* Single child case: no horizontal bar needed, vertical drop continues */
+.tree-node:only-child::after,
+.tree-node:only-child::before {
+  display: none;
+}
+
+/* First child: remove left branch extending outward */
+.tree-node:first-child::before {
+  border-top: none;
+}
+
+/* Last child: remove right branch extending outward */
+.tree-node:last-child::after {
+  border-top: none;
+}
+
+/* ==========================================================================
+   Person Card Styling
+   ========================================================================== */
+
+.person-card {
+  position: relative;
+  width: 220px;
+  min-height: 110px;
+  background-color: var(--tree-card-bg);
+  border: 1px solid var(--tree-card-border);
+  border-radius: 1rem;
+  box-shadow: var(--tree-card-shadow);
+  padding: 12px 14px 14px 14px;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  flex-direction: column;
+  z-index: 2;
+}
+
+.person-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+  border-color: #d97706;
+}
+
+/* Highlight pulse when selected via search */
+.person-card.is-highlighted {
+  animation: card-pulse 1.8s infinite;
+  border-color: #f59e0b !important;
+  box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.35), 0 12px 24px -4px rgba(245, 158, 11, 0.25) !important;
+  transform: scale(1.04);
+  z-index: 10;
+}
+
+@keyframes card-pulse {
+  0%, 100% {
+    box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.3), 0 10px 20px -3px rgba(245, 158, 11, 0.2);
+  }
+  50% {
+    box-shadow: 0 0 0 7px rgba(245, 158, 11, 0.5), 0 14px 28px -3px rgba(245, 158, 11, 0.4);
+  }
+}
+
+/* Root Ancestor (Cụ Khởi Tổ) Special Styling */
+.person-card.is-root {
+  border: 2px solid #d97706;
+  background: linear-gradient(to bottom, var(--tree-card-bg), rgba(245, 158, 11, 0.04));
+  box-shadow: 0 8px 20px -4px rgba(217, 119, 6, 0.2);
+}
+
+/* Expand / Collapse Branch Toggle Button */
+.branch-toggle-btn {
+  position: absolute;
+  bottom: -13px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  padding: 2px 8px;
+  border-radius: 9999px;
+  font-size: 11px;
+  font-weight: 600;
+  background-color: var(--c-surface);
+  border: 1px solid var(--c-border);
+  color: var(--c-text);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+  z-index: 3;
+}
+
+.branch-toggle-btn:hover {
+  background-color: #f59e0b;
+  color: #ffffff;
+  border-color: #d97706;
+  transform: translateX(-50%) scale(1.08);
+}
+
+.branch-toggle-btn.is-collapsed {
+  background-color: #fef3c7;
+  color: #92400e;
+  border-color: #fcd34d;
+}
+
+.dark .branch-toggle-btn.is-collapsed {
+  background-color: #451a03;
+  color: #fde68a;
+  border-color: #78350f;
+}
+
+/* Floating Controls Bar */
+.tree-floating-controls {
+  position: absolute;
+  bottom: 24px;
+  right: 24px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  border-radius: 1rem;
+  background-color: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--c-border);
+  box-shadow: 0 8px 20px -4px rgba(0, 0, 0, 0.12);
+  z-index: 20;
+}
+
+.dark .tree-floating-controls {
+  background-color: rgba(17, 24, 39, 0.88);
+}
+
+.tree-control-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 0.625rem;
+  border: 1px solid var(--c-border);
+  background-color: var(--c-surface);
+  color: var(--c-text);
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.tree-control-btn:hover {
+  background-color: var(--c-surface-2);
+  color: #d97706;
+  border-color: #d97706;
+  transform: translateY(-1px);
+}
+
+.tree-control-btn:active {
+  transform: translateY(0);
+}

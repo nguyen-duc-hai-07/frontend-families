@@ -13,11 +13,14 @@ function ScrollToTop() {
 }
 
 export function MainLayout() {
+  const { pathname } = useLocation()
+  const isTreePage = pathname === '/' || pathname === '/tree' || pathname === '/family-tree'
+
   return (
     <div className="min-h-screen flex flex-col bg-[var(--c-bg)] text-[var(--c-text)] transition-colors duration-200">
       <ScrollToTop />
       <Header />
-      <main className="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className={isTreePage ? 'flex-1 w-full flex flex-col p-0 m-0 overflow-hidden h-[calc(100vh-64px)]' : 'flex-1 w-full max-w-[1680px] mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-6'}>
         <Suspense
           fallback={
             <div className="py-12 space-y-4 max-w-4xl mx-auto">
@@ -30,7 +33,7 @@ export function MainLayout() {
           <Outlet />
         </Suspense>
       </main>
-      <Footer />
+      {!isTreePage && <Footer />}
     </div>
   )
 }

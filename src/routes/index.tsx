@@ -1,94 +1,27 @@
 import { lazy } from 'react'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
-import { ProtectedRoute } from '@/components/common/ProtectedRoute'
-import { AdminRoute } from '@/components/common/AdminRoute'
-import { GuestRoute } from '@/components/common/GuestRoute'
 import { MainLayout } from '@/components/layout/MainLayout'
-import { AdminLayout } from '@/components/layout/AdminLayout'
 import { PATHS } from './paths'
 
 // Lazy load Pages
-const HomePage = lazy(() => import('@/features/home/pages/HomePage'))
-const UsersPage = lazy(() => import('@/features/users/pages/UsersPage'))
-const LoginPage = lazy(() => import('@/features/auth/pages/LoginPage'))
-const ProfilePage = lazy(() => import('@/features/auth/pages/ProfilePage'))
+const FamilyTreePage = lazy(() => import('@/features/family-tree/pages/FamilyTreePage'))
+const PersonsPage = lazy(() => import('@/pages/PersonsPage'))
+const PersonDetailPage = lazy(() => import('@/pages/PersonDetailPage'))
+const RelationsPage = lazy(() => import('@/pages/RelationsPage'))
+const FamilyInfoPage = lazy(() => import('@/pages/FamilyInfoPage'))
 const NotFoundPage = lazy(() => import('@/pages/NotFoundPage'))
-const ForbiddenPage = lazy(() => import('@/pages/ForbiddenPage'))
-
-// Lazy load Admin Pages
-const AdminOverviewPage = lazy(() => import('@/features/admin/pages/AdminOverviewPage'))
-const AdminUsersPage = lazy(() => import('@/features/admin/pages/AdminUsersPage'))
-const AdminSettingsPage = lazy(() => import('@/features/admin/pages/AdminSettingsPage'))
 
 const router = createBrowserRouter([
   {
     element: <MainLayout />,
     children: [
-      { path: PATHS.HOME, element: <HomePage /> },
-      { path: PATHS.USERS, element: <UsersPage /> },
-      {
-        path: PATHS.LOGIN,
-        element: (
-          <GuestRoute>
-            <LoginPage />
-          </GuestRoute>
-        ),
-      },
-      {
-        path: PATHS.REGISTER,
-        element: (
-          <GuestRoute>
-            <LoginPage />
-          </GuestRoute>
-        ),
-      },
-      {
-        path: PATHS.FORGOT_PASSWORD,
-        element: (
-          <GuestRoute>
-            <LoginPage />
-          </GuestRoute>
-        ),
-      },
-      {
-        path: PATHS.RESET_PASSWORD,
-        element: (
-          <GuestRoute>
-            <LoginPage />
-          </GuestRoute>
-        ),
-      },
-      {
-        path: PATHS.VERIFY_EMAIL,
-        element: (
-          <GuestRoute>
-            <LoginPage />
-          </GuestRoute>
-        ),
-      },
-      {
-        path: PATHS.PROFILE,
-        element: (
-          <ProtectedRoute>
-            <ProfilePage />
-          </ProtectedRoute>
-        ),
-      },
-      { path: '/403', element: <ForbiddenPage /> },
+      { path: PATHS.HOME, element: <FamilyTreePage /> },
+      { path: PATHS.FAMILY_TREE, element: <FamilyTreePage /> },
+      { path: PATHS.PERSONS, element: <PersonsPage /> },
+      { path: PATHS.PERSON_DETAIL, element: <PersonDetailPage /> },
+      { path: PATHS.RELATIONS, element: <RelationsPage /> },
+      { path: PATHS.FAMILY_INFO, element: <FamilyInfoPage /> },
       { path: '*', element: <NotFoundPage /> },
-    ],
-  },
-  {
-    path: PATHS.ADMIN,
-    element: (
-      <AdminRoute>
-        <AdminLayout />
-      </AdminRoute>
-    ),
-    children: [
-      { index: true, element: <AdminOverviewPage /> },
-      { path: PATHS.ADMIN_USERS, element: <AdminUsersPage /> },
-      { path: PATHS.ADMIN_SETTINGS, element: <AdminSettingsPage /> },
     ],
   },
 ])

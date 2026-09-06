@@ -1,5 +1,5 @@
-import { oplearnClient } from './oplearnClient'
-import type { FileUploadResponse } from '@/types'
+import { apiClient } from './apiClient'
+import type { FileUploadResponse, ResponseGeneral } from '@/types'
 
 const MAX_SINGLE_FILE_SIZE = 10 * 1024 * 1024 // 10MB
 const MAX_MULTIPLE_FILES_SIZE = 100 * 1024 * 1024 // 100MB
@@ -7,7 +7,7 @@ const MAX_MULTIPLE_FILES_COUNT = 10
 
 export const fileService = {
   /**
-   * Tải lên 1 file đơn lẻ (Avatar, ảnh bìa, âm thanh...)
+   * Tải lên 1 file đơn lẻ (Avatar, ảnh gia phả, tư liệu...)
    * @param file File cần upload (tối đa 10MB)
    */
   async uploadFile(file: File): Promise<FileUploadResponse> {
@@ -18,20 +18,12 @@ export const fileService = {
     const formData = new FormData()
     formData.append('file', file)
 
-    const res = await oplearnClient.post<any>('/files/upload', formData, {
+    const res = await apiClient.post<ResponseGeneral<FileUploadResponse>>('/files/upload', formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },
     })
-    const data = res.data?.data ?? res.data
-    return {
-      url: data.url,
-      file_name: data.file_name ?? data.fileName,
-      fileName: data.fileName ?? data.file_name,
-      size: data.size,
-      content_type: data.content_type ?? data.contentType,
-      contentType: data.contentType ?? data.content_type,
-    }
+    return res.data.data
   },
 
   /**
@@ -56,33 +48,26 @@ export const fileService = {
       formData.append('files', file)
     })
 
-    const res = await oplearnClient.post<any>('/files/upload-multiple', formData, {
+    const res = await apiClient.post<ResponseGeneral<FileUploadResponse[]>>('/files/upload-multiple', formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },
     })
-    const data = res.data?.data ?? res.data
-    const items = Array.isArray(data) ? data : [data]
-    return items.map((item: any) => ({
-      url: item.url,
-      file_name: item.file_name ?? item.fileName,
-      fileName: item.fileName ?? item.file_name,
-      size: item.size,
-      content_type: item.content_type ?? item.contentType,
-      contentType: item.contentType ?? item.content_type,
-    }))
+    return res.data.data
   },
 
   /**
    * Xóa file khỏi hệ thống theo file_name
-   * @param fileName Tên file cần xóa (vd: uuid-ten-file.jpg)
+   * @param fileName Tên file cần xóa (vd: abc-xyz.jpg)
    */
   async deleteFile(fileName: string): Promise<void> {
     if (!fileName) return
-    await oplearnClient.delete('/files', {
+    await apiClient.delete<ResponseGeneral<void>>('/files', {
       params: {
         file_name: fileName,
       },
     })
   },
 }
+
+export default fileService

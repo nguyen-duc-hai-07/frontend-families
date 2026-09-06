@@ -104,7 +104,7 @@ export function getErrorMessage(error: unknown): string {
         if (tr !== resData.message && !resData.message.includes('Request')) return tr
       }
       if (resData.error && typeof resData.error === 'string') return translateMessage(resData.error)
-      if (Array.isArray(resData.errors)) return resData.errors.map((e) => translateMessage(String(e))).join(', ')
+      if (Array.isArray(resData.errors)) return resData.errors.map((e: unknown) => translateMessage(String(e))).join(', ')
       if (resData.errors && typeof resData.errors === 'object') {
         return Object.entries(resData.errors)
           .map(([k, v]) => `${k}: ${translateMessage(String(v))}`)

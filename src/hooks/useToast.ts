@@ -7,4 +7,4 @@ export function useToast(): ToastContextType {
   return ctx
 }
 
-export type { ToastType, ToastContextType } from '@/contexts/toast-context'
+export type { ToastType, ToastContextType, ToastFunction } from '@/contexts/toast-context'

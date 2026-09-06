@@ -37,7 +37,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
     setToasts((prev) => prev.filter((t) => t.id !== id))
   }, [])
 
-  const toast = useCallback(
+  const baseToast = useCallback(
     (message: string, type: ToastType = 'info', title?: string) => {
       const key = `${type}|${title ?? ''}|${message}`
       const now = Date.now()
@@ -52,8 +52,40 @@ export function ToastProvider({ children }: { children: ReactNode }) {
     [dismiss],
   )
 
+  const toastFn = useCallback(
+    (message: string, type: ToastType = 'info', title?: string) => {
+      baseToast(message, type, title)
+    },
+    [baseToast],
+  ) as any
+
+  toastFn.success = useCallback(
+    (message: string, title?: string) => baseToast(message, 'success', title),
+    [baseToast],
+  )
+  toastFn.error = useCallback(
+    (message: string, title?: string) => baseToast(message, 'error', title),
+    [baseToast],
+  )
+  toastFn.info = useCallback(
+    (message: string, title?: string) => baseToast(message, 'info', title),
+    [baseToast],
+  )
+  toastFn.warning = useCallback(
+    (message: string, title?: string) => baseToast(message, 'warning', title),
+    [baseToast],
+  )
+
   return (
-    <ToastContext.Provider value={{ toast }}>
+    <ToastContext.Provider
+      value={{
+        toast: toastFn,
+        success: toastFn.success,
+        error: toastFn.error,
+        info: toastFn.info,
+        warning: toastFn.warning,
+      }}
+    >
       {children}
       {toasts.length > 0 && (
         <div className="toast-stack" role="region" aria-live="polite">

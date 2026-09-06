@@ -1,7 +1,9 @@
 interface PaginationProps {
-  page: number // 0-based
+  page?: number // 0-based
+  currentPage?: number // alias for page
   totalPages: number
-  onChange: (page: number) => void
+  onChange?: (page: number) => void
+  onPageChange?: (page: number) => void // alias for onChange
   /** Tổng số mục — nếu truyền sẽ hiện dòng meta "N bài · trang x/y" phía trên nav */
   totalItems?: number
   /** Nhãn đơn vị cho dòng meta, mặc định "bài" */
@@ -34,9 +36,11 @@ function pageItems(current: number, total: number): (number | 'gap')[] {
 }
 
 export function Pagination({
-  page,
+  page: propPage,
+  currentPage,
   totalPages,
-  onChange,
+  onChange: propOnChange,
+  onPageChange,
   totalItems,
   itemLabel = 'bài',
   variant = 'default',
@@ -44,6 +48,9 @@ export function Pagination({
   className = '',
   scrollToTop = true,
 }: PaginationProps) {
+  const page = propPage ?? currentPage ?? 0
+  const onChange = propOnChange ?? onPageChange ?? (() => {})
+
   const go = (next: number) => {
     if (next === page || next < 0 || next >= totalPages) return
     onChange(next)
