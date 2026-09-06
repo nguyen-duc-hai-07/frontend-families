@@ -219,6 +219,18 @@ export class FamilyService {
   async deleteMarriage(marriageId: number): Promise<void> {
     await apiClient.delete<ResponseGeneral<void>>(`/marriages/${marriageId}`)
   }
+
+  // ==========================================
+  // V. Phả đồ Cội Nguồn & Dòng Dõi Tổ Tiên (Ancestry)
+  // ==========================================
+
+  /**
+   * Lấy danh sách dòng dõi phả hệ tổ tiên trực hệ từ Cụ Khởi Tổ đến thành viên này
+   */
+  async getAncestry(personId: number): Promise<PersonDetail[]> {
+    const res = await apiClient.get<ResponseGeneral<PersonDetail[]>>(`/persons/${personId}/ancestry`)
+    return res.data.data || []
+  }
 }
 
 export const familyService = new FamilyService()

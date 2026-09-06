@@ -1,4 +1,4 @@
-import React, { useState, useMemo, memo } from 'react'
+import React, { useState, useMemo, memo, useRef, useEffect } from 'react'
 import type { PersonTreeNode } from '@/types'
 import { toRoman } from '../utils/treeRoman'
 
@@ -6,6 +6,7 @@ interface TreeAccordionViewProps {
   treeData: PersonTreeNode[]
   collapsedNodeIds: Set<number>
   selectedPersonId: number | null
+  centerRootTrigger?: number
   onToggleCollapse: (id: number) => void
   onSelectPerson: (id: number) => void
   onCollapseAll: () => void
@@ -224,12 +225,20 @@ export function TreeAccordionView({
   treeData,
   collapsedNodeIds,
   selectedPersonId,
+  centerRootTrigger,
   onToggleCollapse,
   onSelectPerson,
   onCollapseAll,
   onExpandAll,
 }: TreeAccordionViewProps) {
   const [searchQuery, setSearchQuery] = useState('')
+  const listContainerRef = useRef<HTMLDivElement | null>(null)
+
+  useEffect(() => {
+    if (centerRootTrigger && centerRootTrigger > 0) {
+      listContainerRef.current?.scrollTo({ top: 0, behavior: 'smooth' })
+    }
+  }, [centerRootTrigger])
 
   // Find all nodes matching search query
   const matchedIds = useMemo(() => {
@@ -322,7 +331,7 @@ export function TreeAccordionView({
       </div>
 
       {/* Accordion Tree List Container */}
-      <div className="flex-1 overflow-y-auto p-3 sm:p-5">
+      <div ref={listContainerRef} className="flex-1 overflow-y-auto p-3 sm:p-5">
         {treeData.length > 0 ? (
           <ul className="space-y-1 max-w-4xl mx-auto p-0 m-0">
             {treeData.map((rootNode) => (

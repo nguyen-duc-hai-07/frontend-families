@@ -6,6 +6,7 @@ import { useToast } from '@/hooks/useToast'
 import type { PersonDetail, SpouseDetail, PersonRequest } from '@/types'
 import { PATHS } from '@/routes/paths'
 import { toRoman } from '../utils/treeRoman'
+import { AncestryTimelineModal } from './AncestryTimelineModal'
 
 interface PersonDetailDrawerProps {
   personId: number | null
@@ -61,6 +62,7 @@ export function PersonDetailDrawer({
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [updatingAvatar, setUpdatingAvatar] = useState(false)
+  const [isAncestryOpen, setIsAncestryOpen] = useState(false)
   const avatarInputRef = useRef<HTMLInputElement | null>(null)
 
   useEffect(() => {
@@ -427,6 +429,22 @@ export function PersonDetailDrawer({
                     <span>🗑️</span> Xóa
                   </button>
                 </div>
+
+                {/* Ancestry Lineage Quick Action Banner */}
+                <button
+                  type="button"
+                  onClick={() => setIsAncestryOpen(true)}
+                  className="w-full mt-2.5 py-2 px-3 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white font-bold text-xs shadow-xs hover:shadow-md transition-all flex items-center justify-between group cursor-pointer"
+                  title="Xem toàn bộ dòng dõi tổ tiên trực hệ từ Cụ Khởi Tổ"
+                >
+                  <div className="flex items-center gap-2">
+                    <span className="text-base">📜</span>
+                    <span className="font-bold">Xem Dòng Dõi Tổ Tiên</span>
+                  </div>
+                  <span className="text-amber-100 group-hover:translate-x-0.5 transition-transform text-xs font-semibold flex items-center gap-0.5">
+                    Truy vết cội nguồn ›
+                  </span>
+                </button>
               </div>
 
               {/* Personal Details Grid */}
@@ -571,6 +589,17 @@ export function PersonDetailDrawer({
             </>
           ) : null}
         </div>
+
+        {/* Modal Phả Đồ Dòng Dõi Tổ Tiên */}
+        {person && (
+          <AncestryTimelineModal
+            isOpen={isAncestryOpen}
+            onClose={() => setIsAncestryOpen(false)}
+            personId={person.id}
+            personName={person.full_name}
+            onFocusOnTree={onFocusOnTree}
+          />
+        )}
       </aside>
     </div>
   )

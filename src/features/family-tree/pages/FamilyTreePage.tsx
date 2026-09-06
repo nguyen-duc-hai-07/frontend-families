@@ -68,6 +68,19 @@ export default function FamilyTreePage() {
     [setIsAll, setMaxGeneration]
   )
 
+  // Camera pan to Cụ Khởi Tổ trigger when clicking Mở hết / Thu gọn
+  const [centerRootTrigger, setCenterRootTrigger] = useState(0)
+
+  const handleCollapseAll = useCallback(() => {
+    collapseAll()
+    setCenterRootTrigger((prev) => prev + 1)
+  }, [collapseAll])
+
+  const handleExpandAll = useCallback(() => {
+    expandAll()
+    setCenterRootTrigger((prev) => prev + 1)
+  }, [expandAll])
+
   // 3 View Modes: 'top-down' (PC), 'left-to-right' (Timeline), 'accordion' (Mobile)
   // Default to accordion if screen is mobile (<768px), otherwise top-down
   const [viewMode, setViewMode] = useState<TreeViewMode>(() => {
@@ -228,8 +241,8 @@ export default function FamilyTreePage() {
         selectedPersonId={selectedPersonId}
         highlightedPersonId={highlightedPersonId}
         onClearHighlight={() => focusPerson(null)}
-        onCollapseAll={collapseAll}
-        onExpandAll={expandAll}
+        onCollapseAll={handleCollapseAll}
+        onExpandAll={handleExpandAll}
         onExport={() => setIsImportExportOpen(true)}
         onRefresh={handleRefreshAll}
         loading={loading}
@@ -259,11 +272,12 @@ export default function FamilyTreePage() {
             collapsedNodeIds={collapsedNodeIds}
             selectedPersonId={selectedPersonId}
             highlightedPersonId={highlightedPersonId}
+            centerRootTrigger={centerRootTrigger}
             loading={loading}
             onToggleCollapse={toggleCollapse}
             onSelectPerson={selectPerson}
-            onCollapseAll={collapseAll}
-            onExpandAll={expandAll}
+            onCollapseAll={handleCollapseAll}
+            onExpandAll={handleExpandAll}
             onCenterNodeRef={handleCenterNodeRef}
             svgRef={svgRef}
           />
@@ -275,11 +289,12 @@ export default function FamilyTreePage() {
             collapsedNodeIds={collapsedNodeIds}
             selectedPersonId={selectedPersonId}
             highlightedPersonId={highlightedPersonId}
+            centerRootTrigger={centerRootTrigger}
             loading={loading}
             onToggleCollapse={toggleCollapse}
             onSelectPerson={selectPerson}
-            onCollapseAll={collapseAll}
-            onExpandAll={expandAll}
+            onCollapseAll={handleCollapseAll}
+            onExpandAll={handleExpandAll}
             onCenterNodeRef={handleCenterNodeRef}
             svgRef={svgRef}
           />
@@ -289,10 +304,11 @@ export default function FamilyTreePage() {
             treeData={treeData}
             collapsedNodeIds={collapsedNodeIds}
             selectedPersonId={selectedPersonId}
+            centerRootTrigger={centerRootTrigger}
             onToggleCollapse={toggleCollapse}
             onSelectPerson={selectPerson}
-            onCollapseAll={collapseAll}
-            onExpandAll={expandAll}
+            onCollapseAll={handleCollapseAll}
+            onExpandAll={handleExpandAll}
           />
         )}
       </div>

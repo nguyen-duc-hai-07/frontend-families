@@ -5,6 +5,7 @@ import { Card, Button } from '@/components/ui'
 import { ConfirmModal } from '@/components/common/ConfirmModal'
 import { PersonModalForm } from '@/features/family-tree/components/PersonModalForm'
 import { RelationModalForm } from '@/features/family-tree/components/RelationModalForm'
+import { AncestryTimelineModal } from '@/features/family-tree/components/AncestryTimelineModal'
 import { familyService } from '@/services/family.service'
 import { fileService } from '@/services/file.service'
 import { useFamily } from '@/hooks/useFamily'
@@ -22,6 +23,7 @@ export default function PersonDetailPage() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [updatingAvatar, setUpdatingAvatar] = useState(false)
+  const [isAncestryOpen, setIsAncestryOpen] = useState(false)
   const avatarInputRef = useRef<HTMLInputElement | null>(null)
 
   // Edit / Relation Modals
@@ -337,6 +339,14 @@ export default function PersonDetailPage() {
 
           {/* Actions button bar */}
           <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2 pt-2">
+            <Button
+              variant="secondary"
+              onClick={() => setIsAncestryOpen(true)}
+              className="text-xs bg-amber-50 hover:bg-amber-100 dark:bg-amber-950/40 text-amber-800 dark:text-amber-300 border-amber-300/80 dark:border-amber-700/80 font-bold"
+              title="Xem toàn bộ dòng dõi tổ tiên trực hệ từ Cụ Khởi Tổ"
+            >
+              <span>📜</span> Xem dòng dõi tổ tiên
+            </Button>
             <Button variant="secondary" onClick={() => setIsEditOpen(true)} className="text-xs">
               <span>✏️</span> Sửa thông tin
             </Button>
@@ -549,6 +559,17 @@ export default function PersonDetailPage() {
         }
         confirmText="Hủy liên kết"
       />
+
+      {/* Modal: Phả Đồ Cội Nguồn & Dòng Dõi Trực Hệ */}
+      {person && (
+        <AncestryTimelineModal
+          isOpen={isAncestryOpen}
+          onClose={() => setIsAncestryOpen(false)}
+          personId={person.id}
+          personName={person.full_name}
+          onFocusOnTree={(focusId) => navigate(`${PATHS.FAMILY_TREE}?focus=${focusId}`)}
+        />
+      )}
     </div>
   )
 }

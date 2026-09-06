@@ -9,6 +9,7 @@ export interface D3TreeCanvasProps {
   collapsedNodeIds: Set<number>
   selectedPersonId: number | null
   highlightedPersonId: number | null
+  centerRootTrigger?: number
   loading?: boolean
   onToggleCollapse: (id: number) => void
   onSelectPerson: (id: number) => void
@@ -47,6 +48,7 @@ export function D3TreeCanvas({
   collapsedNodeIds,
   selectedPersonId,
   highlightedPersonId,
+  centerRootTrigger,
   loading = false,
   onToggleCollapse,
   onSelectPerson,
@@ -379,6 +381,24 @@ export function D3TreeCanvas({
     return () => ro.disconnect()
   }, [nodes.length, highlightedPersonId, handleResetView])
 
+  // Center on Cụ Khởi Tổ whenever Mở hết (Expand All) or Thu gọn (Collapse All) is triggered
+  const pendingCenterRootRef = useRef(false)
+  useEffect(() => {
+    if (centerRootTrigger && centerRootTrigger > 0) {
+      pendingCenterRootRef.current = true
+    }
+  }, [centerRootTrigger])
+
+  useEffect(() => {
+    if (pendingCenterRootRef.current && nodes.length > 0) {
+      pendingCenterRootRef.current = false
+      const timer = setTimeout(() => {
+        handleResetView()
+      }, 40)
+      return () => clearTimeout(timer)
+    }
+  }, [nodes, handleResetView])
+
   // Center on a specific node ID (only depends on nodes, reads scale from transformRef)
   const centerOnNode = useCallback(
     (nodeId: number) => {
@@ -596,6 +616,7 @@ export function D3TreeCanvas({
         style={{
           transform: `translate(${transform.x}px, ${transform.y}px) scale(${transform.scale})`,
           transformOrigin: '0 0',
+          transition: isDragging ? 'none' : 'transform 400ms cubic-bezier(0.16, 1, 0.3, 1)',
         }}
       >
         {/* Layer 1: SVG Connector Paths */}
