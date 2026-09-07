@@ -26,7 +26,7 @@ export function Header() {
   const [familyDropdownOpen, setFamilyDropdownOpen] = useState(false)
 
   return (
-    <header className="sticky top-0 z-40 w-full bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-b border-slate-200/70 dark:border-slate-800/70 transition-colors">
+    <header className="sticky top-0 z-40 w-full bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-b border-slate-200/70 dark:border-slate-800/70 transition-colors duration-250">
       <div className="max-w-[1680px] mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-3">
         {/* Logo & Brand */}
         <Link to={PATHS.HOME} className="flex items-center gap-2.5 flex-shrink-0 group">

@@ -62,12 +62,21 @@ export function PersonDetailDrawer({
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [updatingAvatar, setUpdatingAvatar] = useState(false)
+  const [imgError, setImgError] = useState(false)
+  const [isEditingUrl, setIsEditingUrl] = useState(false)
+  const [customUrl, setCustomUrl] = useState('')
   const [isAncestryOpen, setIsAncestryOpen] = useState(false)
   const avatarInputRef = useRef<HTMLInputElement | null>(null)
 
   useEffect(() => {
     setCurrentId(personId)
   }, [personId])
+
+  useEffect(() => {
+    setImgError(false)
+    setIsEditingUrl(false)
+    setCustomUrl(person?.avatar_url || '')
+  }, [person?.avatar_url])
 
   const loadDetail = useCallback(async (id: number) => {
     setLoading(true)
@@ -107,6 +116,16 @@ export function PersonDetailDrawer({
     const file = e.target.files?.[0]
     if (!file || !person) return
 
+    if (!file.type.startsWith('image/')) {
+      toast.error('Vui lòng chọn file hình ảnh hợp lệ (JPG, PNG, WebP...)')
+      return
+    }
+
+    if (file.size > 10 * 1024 * 1024) {
+      toast.error(`Dung lượng ảnh vượt quá 10MB (${(file.size / (1024 * 1024)).toFixed(2)}MB)`)
+      return
+    }
+
     setUpdatingAvatar(true)
     try {
       // 1. Tải ảnh lên
@@ -130,6 +149,7 @@ export function PersonDetailDrawer({
 
       const updated = await familyService.updatePerson(person.id, payload)
       setPerson(updated)
+      setImgError(false)
       toast.success('Đã cập nhật ảnh đại diện thành công!')
       onPersonUpdated?.(updated)
     } catch (err: any) {
@@ -141,6 +161,42 @@ export function PersonDetailDrawer({
       if (avatarInputRef.current) {
         avatarInputRef.current.value = ''
       }
+    }
+  }
+
+  // Save custom avatar URL directly
+  const handleSaveCustomUrl = async () => {
+    if (!person) return
+
+    setUpdatingAvatar(true)
+    try {
+      const payload: PersonRequest = {
+        family_id: person.family_id,
+        full_name: person.full_name,
+        gender: person.gender,
+        generation: person.generation,
+        is_alive: person.is_alive,
+        is_bloodline: person.is_bloodline,
+        birth_year: person.birth_year,
+        death_year: person.death_year,
+        birth_place: person.birth_place,
+        occupation: person.occupation,
+        biography: person.biography,
+        avatar_url: customUrl.trim() || null,
+      }
+
+      const updated = await familyService.updatePerson(person.id, payload)
+      setPerson(updated)
+      setImgError(false)
+      setIsEditingUrl(false)
+      toast.success('Đã lưu liên kết ảnh đại diện thành công!')
+      onPersonUpdated?.(updated)
+    } catch (err: any) {
+      console.error('Lỗi khi lưu link ảnh đại diện:', err)
+      const msg = err.response?.data?.data?.message || err.message || 'Không thể lưu link ảnh đại diện'
+      toast.error(msg)
+    } finally {
+      setUpdatingAvatar(false)
     }
   }
 
@@ -261,10 +317,11 @@ export function PersonDetailDrawer({
                   {/* Large Avatar with Direct Upload & Delete */}
                   <div className="relative flex-shrink-0 flex flex-col items-center">
                     <div className="relative group/avatar">
-                      {person.avatar_url ? (
+                      {person.avatar_url && !imgError ? (
                         <img
                           src={person.avatar_url}
                           alt={person.full_name}
+                          onError={() => setImgError(true)}
                           className={`w-20 h-20 rounded-2xl object-cover shadow-md ring-2 ${
                             isMale ? 'ring-sky-400' : 'ring-rose-400'
                           }`}
@@ -293,7 +350,7 @@ export function PersonDetailDrawer({
                         type="button"
                         onClick={() => avatarInputRef.current?.click()}
                         disabled={updatingAvatar}
-                        title="Đổi ảnh đại diện"
+                        title="Đổi ảnh đại diện (Tải từ máy)"
                         className="absolute inset-0 rounded-2xl bg-black/50 opacity-0 group-hover/avatar:opacity-100 flex flex-col items-center justify-center text-white text-[11px] font-semibold transition-opacity duration-150 cursor-pointer z-10"
                       >
                         <span className="text-base">📷</span>
@@ -320,16 +377,32 @@ export function PersonDetailDrawer({
                     />
 
                     {/* Quick Avatar Actions under picture */}
-                    <div className="flex items-center gap-1.5 mt-2">
+                    <div className="flex items-center gap-1 mt-2">
                       <button
                         type="button"
                         onClick={() => avatarInputRef.current?.click()}
                         disabled={updatingAvatar}
                         className="text-[11px] font-semibold text-amber-700 dark:text-amber-400 hover:underline cursor-pointer flex items-center gap-0.5"
-                        title="Tải lên hoặc đổi ảnh đại diện"
+                        title="Tải lên ảnh từ máy"
                       >
                         <span>📷</span>
-                        <span>{person.avatar_url ? 'Đổi' : 'Thêm'}</span>
+                        <span>{person.avatar_url ? 'Đổi' : 'Tải'}</span>
+                      </button>
+
+                      <span className="text-slate-300 dark:text-slate-700 text-[10px]">•</span>
+
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setCustomUrl(person.avatar_url || '')
+                          setIsEditingUrl(!isEditingUrl)
+                        }}
+                        disabled={updatingAvatar}
+                        className="text-[11px] font-semibold text-sky-600 dark:text-sky-400 hover:underline cursor-pointer flex items-center gap-0.5"
+                        title="Dán link liên kết ảnh URL"
+                      >
+                        <span>🔗</span>
+                        <span>URL</span>
                       </button>
 
                       {person.avatar_url && (
@@ -348,6 +421,46 @@ export function PersonDetailDrawer({
                         </>
                       )}
                     </div>
+
+                    {/* Inline Direct URL Input Box */}
+                    {isEditingUrl && (
+                      <div className="w-48 mt-2 p-2 rounded-xl bg-slate-100 dark:bg-slate-800/90 border border-slate-300/80 dark:border-slate-700 flex flex-col gap-1.5 shadow-sm animate-in fade-in">
+                        <div className="text-[10px] font-bold text-slate-600 dark:text-slate-300 flex items-center justify-between">
+                          <span>🔗 URL ảnh đại diện</span>
+                          <button
+                            type="button"
+                            onClick={() => setIsEditingUrl(false)}
+                            className="text-slate-400 hover:text-slate-600 cursor-pointer text-xs"
+                          >
+                            ✕
+                          </button>
+                        </div>
+                        <input
+                          type="url"
+                          placeholder="https://example.com/avatar.jpg"
+                          value={customUrl}
+                          onChange={(e) => setCustomUrl(e.target.value)}
+                          className="w-full px-2 py-1 text-xs bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-md text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-1 focus:ring-amber-500"
+                        />
+                        <div className="flex justify-end gap-1">
+                          <button
+                            type="button"
+                            onClick={() => setIsEditingUrl(false)}
+                            className="px-2 py-0.5 text-[10px] rounded bg-slate-200 hover:bg-slate-300 dark:bg-slate-700 text-slate-700 dark:text-slate-200 cursor-pointer"
+                          >
+                            Hủy
+                          </button>
+                          <button
+                            type="button"
+                            onClick={handleSaveCustomUrl}
+                            disabled={updatingAvatar}
+                            className="px-2 py-0.5 text-[10px] font-semibold rounded bg-amber-600 hover:bg-amber-500 text-white cursor-pointer shadow-2xs"
+                          >
+                            {updatingAvatar ? '...' : 'Lưu'}
+                          </button>
+                        </div>
+                      </div>
+                    )}
                   </div>
 
                   {/* Name and Badges */}

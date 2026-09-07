@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Seo } from '@/components/common/Seo'
-import { Card, Pagination, PageSizeSelect, Skeleton, Button } from '@/components/ui'
+import { Card, Pagination, PageSizeSelect, Skeleton, Button, Avatar } from '@/components/ui'
 import { ConfirmModal } from '@/components/common/ConfirmModal'
 import { PersonDetailModal } from '@/features/family-tree/components/PersonDetailModal'
 import { PersonModalForm } from '@/features/family-tree/components/PersonModalForm'
@@ -251,23 +251,14 @@ export default function PersonsPage() {
                   {/* Top: Avatar, Badges */}
                   <div className="flex items-start justify-between gap-3 mb-3">
                     <div className="relative">
-                      {p.avatar_url ? (
-                        <img
-                          src={p.avatar_url}
-                          alt={p.full_name}
-                          className="w-12 h-12 rounded-full object-cover border-2 border-amber-300 dark:border-amber-700 shadow-xs"
-                        />
-                      ) : (
-                        <div
-                          className={`w-12 h-12 rounded-full flex items-center justify-center font-bold text-white text-base shadow-xs ${
-                            isMale
-                              ? 'bg-gradient-to-tr from-sky-600 to-indigo-700'
-                              : 'bg-gradient-to-tr from-rose-500 to-amber-600'
-                          }`}
-                        >
-                          {p.full_name?.charAt(0) || 'N'}
-                        </div>
-                      )}
+                      <Avatar
+                        src={p.avatar_url}
+                        alt={p.full_name}
+                        gender={p.gender}
+                        size="lg"
+                        shape="circle"
+                        ringClassName="border-2 border-amber-300 dark:border-amber-700 shadow-xs"
+                      />
                       <span
                         className={`absolute -bottom-1 -right-1 w-4 h-4 rounded-full border border-white dark:border-slate-900 flex items-center justify-center text-[9px] text-white ${
                           isMale ? 'bg-sky-600' : 'bg-rose-600'

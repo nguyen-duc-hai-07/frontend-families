@@ -10,6 +10,14 @@ export const apiClient = axios.create({
   },
 })
 
+// Request interceptor: remove Content-Type for FormData to let browser set boundary
+apiClient.interceptors.request.use((config) => {
+  if (typeof FormData !== 'undefined' && config.data instanceof FormData) {
+    delete config.headers['Content-Type']
+  }
+  return config
+})
+
 // Response interceptor: log or parse errors cleanly
 apiClient.interceptors.response.use(
   (response) => response,

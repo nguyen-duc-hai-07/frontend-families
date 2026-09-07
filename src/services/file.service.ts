@@ -11,6 +11,10 @@ export const fileService = {
    * @param file File cần upload (tối đa 10MB)
    */
   async uploadFile(file: File): Promise<FileUploadResponse> {
+    if (!file) {
+      throw new Error('Vui lòng chọn một file hình ảnh')
+    }
+
     if (file.size > MAX_SINGLE_FILE_SIZE) {
       throw new Error(`Dung lượng file vượt quá giới hạn 10MB (${(file.size / (1024 * 1024)).toFixed(2)}MB)`)
     }
@@ -18,11 +22,8 @@ export const fileService = {
     const formData = new FormData()
     formData.append('file', file)
 
-    const res = await apiClient.post<ResponseGeneral<FileUploadResponse>>('/files/upload', formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    })
+    // Omit explicit Content-Type so Axios & browser set multipart boundary automatically
+    const res = await apiClient.post<ResponseGeneral<FileUploadResponse>>('/files/upload', formData)
     return res.data.data
   },
 
@@ -48,11 +49,7 @@ export const fileService = {
       formData.append('files', file)
     })
 
-    const res = await apiClient.post<ResponseGeneral<FileUploadResponse[]>>('/files/upload-multiple', formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    })
+    const res = await apiClient.post<ResponseGeneral<FileUploadResponse[]>>('/files/upload-multiple', formData)
     return res.data.data
   },
 

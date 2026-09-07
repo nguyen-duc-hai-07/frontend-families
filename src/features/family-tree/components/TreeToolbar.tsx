@@ -103,7 +103,7 @@ export function TreeToolbar({
   }, [allPersons, highlightedPersonId])
 
   return (
-    <header className="px-3 sm:px-5 py-2.5 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 shadow-xs z-30 flex-shrink-0">
+    <header className="px-3 sm:px-5 py-2.5 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 shadow-xs z-30 flex-shrink-0 transition-colors duration-250">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-2.5">
         {/* Left Section: 3 View Mode Tabs */}
         <div className="flex items-center gap-1 sm:gap-1.5 overflow-x-auto pb-1 md:pb-0 scrollbar-none">

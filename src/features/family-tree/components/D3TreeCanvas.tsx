@@ -530,7 +530,7 @@ export function D3TreeCanvas({
       onPointerUp={handlePointerUp}
       onPointerCancel={handlePointerUp}
       onWheel={handleWheel}
-      className={`relative w-full h-full min-h-0 flex-1 overflow-hidden select-none bg-[#f8fafc] dark:bg-[#0b0f19] cursor-${
+      className={`relative w-full h-full min-h-0 flex-1 overflow-hidden select-none bg-slate-50 dark:bg-[#0b0f19] transition-colors duration-250 cursor-${
         isDragging ? 'grabbing' : 'grab'
       }`}
       style={{

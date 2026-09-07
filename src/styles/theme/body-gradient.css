@@ -1,7 +1,9 @@
 /* Body gradient — fixed để khi scroll gradient không trượt (theo tu-vi-v1). */
 body {
+  background-color: var(--c-bg);
   background: linear-gradient(180deg, var(--c-bg) 0%, var(--c-surface-warm) 60%, var(--c-bg-soft) 100%);
   background-attachment: fixed;
+  transition: background-color 250ms ease, color 250ms ease;
 }
 
 #root {

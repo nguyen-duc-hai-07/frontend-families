@@ -46,10 +46,16 @@ export function PersonModalForm({
   const [occupation, setOccupation] = useState('')
   const [biography, setBiography] = useState('')
   const [avatarUrl, setAvatarUrl] = useState('')
+  const [showUrlInput, setShowUrlInput] = useState(false)
+  const [imgError, setImgError] = useState(false)
 
   const [uploadingImage, setUploadingImage] = useState(false)
   const [submitting, setSubmitting] = useState(false)
   const [errorMsg, setErrorMsg] = useState<string | null>(null)
+
+  useEffect(() => {
+    setImgError(false)
+  }, [avatarUrl])
 
   useEffect(() => {
     if (!isOpen) return
@@ -66,6 +72,7 @@ export function PersonModalForm({
       setOccupation(initialData.occupation || '')
       setBiography(initialData.biography || '')
       setAvatarUrl(initialData.avatar_url || '')
+      setShowUrlInput(Boolean(initialData.avatar_url))
     } else {
       setFullName('')
       setGender('male')
@@ -78,6 +85,7 @@ export function PersonModalForm({
       setOccupation('')
       setBiography('')
       setAvatarUrl('')
+      setShowUrlInput(false)
     }
     setErrorMsg(null)
   }, [isOpen, initialData, prefill])
@@ -86,15 +94,30 @@ export function PersonModalForm({
     const file = e.target.files?.[0]
     if (!file) return
 
+    if (!file.type.startsWith('image/')) {
+      toast.error('Vui lòng chọn file hình ảnh hợp lệ (JPG, PNG, WebP...)')
+      return
+    }
+
+    if (file.size > 10 * 1024 * 1024) {
+      toast.error(`Dung lượng ảnh vượt quá 10MB (${(file.size / (1024 * 1024)).toFixed(2)}MB)`)
+      return
+    }
+
     setUploadingImage(true)
     setErrorMsg(null)
     try {
       const res = await fileService.uploadFile(file)
       setAvatarUrl(res.url)
+      setShowUrlInput(true)
       toast.success('Tải ảnh đại diện thành công!')
     } catch (err: any) {
       console.error('Lỗi upload avatar:', err)
-      const msg = err.response?.data?.data?.message || err.message || 'Không thể tải ảnh lên'
+      const msg =
+        err.response?.data?.data?.message ||
+        err.response?.data?.message ||
+        err.message ||
+        'Không thể tải ảnh lên'
       setErrorMsg(msg)
       toast.error(msg)
     } finally {
@@ -202,17 +225,28 @@ export function PersonModalForm({
           {/* Avatar Preview & Upload */}
           <div className="flex flex-col items-center gap-2 flex-shrink-0">
             <div className="relative w-24 h-24 rounded-2xl overflow-hidden border-2 border-amber-300 dark:border-amber-700 bg-slate-100 dark:bg-slate-800 shadow-sm flex items-center justify-center">
-              {avatarUrl ? (
-                <img src={avatarUrl} alt="Avatar" className="w-full h-full object-cover" />
+              {avatarUrl && !imgError ? (
+                <img
+                  src={avatarUrl}
+                  alt="Avatar"
+                  onError={() => setImgError(true)}
+                  className="w-full h-full object-cover"
+                />
               ) : (
-                <span className="text-3xl">
-                  {gender === 'female' ? '👩' : '👨'}
-                </span>
+                <div
+                  className={`w-full h-full flex items-center justify-center text-3xl font-bold text-white ${
+                    gender === 'female'
+                      ? 'bg-gradient-to-tr from-rose-400 to-pink-600'
+                      : 'bg-gradient-to-tr from-sky-500 to-blue-600'
+                  }`}
+                >
+                  {fullName?.trim() ? fullName.trim().split(' ').pop()?.charAt(0) : (gender === 'female' ? '👩' : '👨')}
+                </div>
               )}
 
               {uploadingImage && (
                 <div className="absolute inset-0 bg-black/60 flex items-center justify-center text-white text-xs font-semibold">
-                  Đang tải...
+                  <span className="animate-spin mr-1">⏳</span> Đang tải...
                 </div>
               )}
             </div>
@@ -225,22 +259,50 @@ export function PersonModalForm({
               className="hidden"
             />
 
-            <button
-              type="button"
-              onClick={() => fileInputRef.current?.click()}
-              disabled={uploadingImage}
-              className="px-2.5 py-1 text-xs font-semibold rounded-lg bg-amber-100 hover:bg-amber-200 dark:bg-amber-950/60 dark:hover:bg-amber-900/80 text-amber-900 dark:text-amber-200 transition-colors"
-            >
-              {uploadingImage ? 'Đang tải...' : '📷 Chọn ảnh'}
-            </button>
+            <div className="flex items-center gap-1">
+              <button
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                disabled={uploadingImage}
+                className="px-2 py-1 text-xs font-semibold rounded-lg bg-amber-100 hover:bg-amber-200 dark:bg-amber-950/60 dark:hover:bg-amber-900/80 text-amber-900 dark:text-amber-200 transition-colors"
+                title="Tải ảnh từ máy"
+              >
+                {uploadingImage ? 'Đang tải...' : '📷 Tải ảnh'}
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setShowUrlInput(!showUrlInput)}
+                className="px-2 py-1 text-xs font-semibold rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 transition-colors"
+                title="Nhập hoặc dán URL ảnh"
+              >
+                🔗 URL
+              </button>
+            </div>
+
             {avatarUrl && (
               <button
                 type="button"
-                onClick={() => setAvatarUrl('')}
-                className="text-[11px] text-rose-600 hover:underline"
+                onClick={() => {
+                  setAvatarUrl('')
+                  setImgError(false)
+                }}
+                className="text-[11px] text-rose-600 dark:text-rose-400 hover:underline"
               >
-                Xóa ảnh
+                🗑️ Xóa ảnh
               </button>
+            )}
+
+            {showUrlInput && (
+              <div className="w-full max-w-[200px] mt-1 animate-in fade-in">
+                <input
+                  type="url"
+                  placeholder="Dán URL ảnh (https://...)"
+                  value={avatarUrl}
+                  onChange={(e) => setAvatarUrl(e.target.value)}
+                  className="w-full px-2 py-1 text-xs bg-[var(--c-bg)] border border-[var(--c-border)] rounded-lg text-[var(--c-text)] focus:outline-none focus:ring-1 focus:ring-amber-500"
+                />
+              </div>
             )}
           </div>
 

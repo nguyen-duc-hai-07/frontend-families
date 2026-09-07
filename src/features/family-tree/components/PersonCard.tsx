@@ -1,4 +1,4 @@
-import React, { memo, useState } from 'react'
+import React, { memo, useState, useEffect } from 'react'
 import type { PersonTreeNode } from '@/types'
 
 export interface PersonCardProps {
@@ -29,6 +29,12 @@ export const PersonCard = memo(function PersonCard({
   onSelectPerson,
 }: PersonCardProps) {
   const [imgError, setImgError] = useState(false)
+
+  // Reset imgError whenever avatar_url changes so updated avatar renders immediately
+  useEffect(() => {
+    setImgError(false)
+  }, [node.avatar_url])
+
   const isFemale = node.gender?.toLowerCase() === 'female'
   const isHorizontal = orientation === 'left-to-right'
 

@@ -219,7 +219,7 @@ export default function FamilyTreePage() {
   const activeFamily = familyInfo || currentFamily
 
   return (
-    <div className="relative flex flex-col flex-1 w-full h-full min-h-0 overflow-hidden bg-slate-100 dark:bg-slate-950">
+    <div className="relative flex flex-col flex-1 w-full h-full min-h-0 overflow-hidden bg-slate-100 dark:bg-slate-950 transition-colors duration-250">
       <Seo
         title={`${activeFamily?.description || activeFamily?.name || 'Phả Hệ Dòng Họ'} – Cây Gia Phả`}
         description="Sơ đồ cây phả hệ dòng họ trực quan 3 chế độ xem: Cây dọc top-down, cây ngang left-to-right, và danh bạ accordion tối ưu mobile."

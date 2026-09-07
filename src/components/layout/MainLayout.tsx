@@ -17,7 +17,7 @@ export function MainLayout() {
   const isTreePage = pathname === '/' || pathname === '/tree' || pathname === '/family-tree'
 
   return (
-    <div className="min-h-screen flex flex-col bg-[var(--c-bg)] text-[var(--c-text)] transition-colors duration-200">
+    <div className="min-h-screen flex flex-col bg-[var(--c-bg)] text-[var(--c-text)] transition-colors duration-250">
       <ScrollToTop />
       <Header />
       <main className={isTreePage ? 'flex-1 w-full flex flex-col p-0 m-0 overflow-hidden h-[calc(100vh-64px)]' : 'flex-1 w-full max-w-[1680px] mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-6'}>

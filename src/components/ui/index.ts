@@ -27,4 +27,7 @@ export type { SkeletonProps } from './Skeleton'
 export { Spinner } from './Spinner'
 export type { SpinnerProps } from './Spinner'
 
+export { Avatar } from './Avatar'
+export type { AvatarProps } from './Avatar'
+
 export * from './icons'

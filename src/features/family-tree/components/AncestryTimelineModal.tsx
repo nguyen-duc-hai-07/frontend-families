@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react'
 import { Link } from 'react-router-dom'
 import { familyService } from '@/services/family.service'
+import { Avatar } from '@/components/ui'
 import type { PersonDetail } from '@/types'
 import { toRoman } from '../utils/treeRoman'
 import { PATHS } from '@/routes/paths'
@@ -192,31 +193,21 @@ export function AncestryTimelineModal({
                           <div className="flex items-center gap-3 min-w-0">
                             {/* Avatar */}
                             <div className="relative flex-shrink-0">
-                              {item.avatar_url ? (
-                                <img
-                                  src={item.avatar_url}
-                                  alt={item.full_name}
-                                  className={`w-11 h-11 rounded-xl object-cover ring-2 ${
-                                    isRoot
-                                      ? 'ring-amber-500'
-                                      : isFemale
-                                      ? 'ring-rose-400'
-                                      : 'ring-sky-400'
-                                  }`}
-                                />
-                              ) : (
-                                <div
-                                  className={`w-11 h-11 rounded-xl flex items-center justify-center font-bold text-sm text-white shadow-xs ring-2 ${
-                                    isRoot
-                                      ? 'bg-gradient-to-tr from-amber-500 to-amber-700 ring-amber-400'
-                                      : isFemale
-                                      ? 'bg-gradient-to-tr from-rose-400 to-pink-600 ring-rose-300'
-                                      : 'bg-gradient-to-tr from-sky-500 to-blue-600 ring-sky-300'
-                                  }`}
-                                >
-                                  {item.full_name?.charAt(0) || 'N'}
-                                </div>
-                              )}
+                              <Avatar
+                                src={item.avatar_url}
+                                alt={item.full_name}
+                                gender={item.gender}
+                                size="custom"
+                                shape="rounded-xl"
+                                className="w-11 h-11 text-sm"
+                                ringClassName={`ring-2 ${
+                                  isRoot
+                                    ? 'ring-amber-500'
+                                    : isFemale
+                                    ? 'ring-rose-400'
+                                    : 'ring-sky-400'
+                                }`}
+                              />
 
                               {isRoot && (
                                 <span className="absolute -top-1.5 -right-1.5 text-xs">👑</span>
